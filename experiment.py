@@ -13,8 +13,7 @@ def run_exp(env_file, vision_handle, n_episodes):
     state = env.reset()
     for _ in range(n_episodes):
         action = agent.get_action(state)
-        next_state = env.step(action)
+        next_state, reward, done, info = env.step(action)
         # subject to change
-        reward = 0
         agent.store_experience(state, next_state, action, reward)
         state = next_state

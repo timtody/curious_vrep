@@ -28,7 +28,8 @@ class Env:
         self.pr.step()
         rgb = self.vision.capture_rgb()
 
-        return rgb
+        # change to include more meaningful info
+        return rgb, 0, False, {}
 
     def reset(self):
         self.robot.set_joint_positions(self.joint_init)

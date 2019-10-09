@@ -32,6 +32,24 @@ class DQNAgent:
 
         return action
 
+    def _predict_rewards(self, obs):
+         pred_rewards = []
+         for model in self.models:
+             pred_rewards.append(model.predict(obs))
+
+        return pred_rewards
+
+    def train(self):
+        # train inverse model
+
+        # train forward model
+
+        # train policy
+
+    def _train_policy(self):
+        old_s, new_s, actions, rewards =\
+            self.buffer.get_random_batch(self.bsize)
+
     def _setup_models(self):
         self.models = []
         for i in range(self.nactions):
@@ -46,3 +64,10 @@ class DQNAgent:
 
     def _gen_actions(self, n):
         return np.linspace(-1, 1, n)
+
+
+class JointAgent:
+    def __init__(self):
+        self.policy = dqn_model()
+        self.fw_model, self.iw_model, self.embed = ICModule()
+

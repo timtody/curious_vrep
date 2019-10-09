@@ -45,6 +45,8 @@ class ICModule:
         self.dense_fw_1 = Dense(256)
         self.dense_fw_2 = Dense(289, activation='sigmoid')
 
+        self.compile()
+
 
     def _inverse_embedding(self, input):
         """This inverse embedding is used by the inverse model
@@ -139,10 +141,12 @@ class ICModule:
         iv_model.compile(optimizer="rmsprop", loss="sparse_categorical_crossentropy")
 
         # forward model (predicts: s_t x a -> s_t+1)
+        # trun off training for the embedded model when constructing
         predicted_state = self._forward_prediction()
         fw_model = Model(inputs=[self.state_forward, self.action],
             outputs=predicted_state)
-        fw_model = AuxModel(fw_model)
+        fw_model = AuxModel(fw_model, trainables=[self.dense_fw_1.variables,
+            self.dense_fw_2.variables])
 
         # embedding model
         emb_model = Model(inputs=self.state_embedding,
@@ -162,7 +166,8 @@ class ForwardModel(Model):
 
 
 class AuxModel:
-    def __init__(self, model):
+    def __init__(self, model, trainables):
+        self.trainables = trainables
         self.model = ForwardModel(model)
         self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
         self.optimizer = tf.keras.optimizers.Adadelta()
@@ -173,6 +178,6 @@ class AuxModel:
             predictions = self.model(inputs)
             loss = self.loss(labels, predictions)
         gradients = tape.gradient(loss, self.model.trainable_variables)
-        self.optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
+        self.optimizer.apply_gradients(zip(gradients, self.trainables))
 
         return loss
