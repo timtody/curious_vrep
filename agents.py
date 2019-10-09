@@ -22,52 +22,106 @@ class DQNAgent:
         self.buffer.append(state, next_state, action, reward)
 
     def get_action(self, obs):
-        draws = np.random.uniform(size=7)
-        action = np.empty(7)
-        for i, dr in enumerate(draws):
-            if dr <= self.eps:
-                action[i] = np.random.choice(self.actions)
-            else:
-                action[i] = self._get_action(obs, i)
+        action = []
+        for  agent in self.joint_agents:
+            action.append(agent.get_action(obs))
 
         return action
 
-    def _predict_rewards(self, obs):
-         pred_rewards = []
-         for model in self.models:
-             pred_rewards.append(model.predict(obs))
-
-        return pred_rewards
+    def _setup_joint_agents(self):
+        self.joint_agents = []
+        for _ in range(7):
+            self.joint_agents.append(JointAgent())
 
     def train(self):
-        # train inverse model
-
-        # train forward model
-
-        # train policy
-
-    def _train_policy(self):
-        old_s, new_s, actions, rewards =\
-            self.buffer.get_random_batch(self.bsize)
-
-    def _setup_models(self):
-        self.models = []
-        for i in range(self.nactions):
-            self.models.append(dqn_model())
-
-    def _get_action(self, obs, joint):
-        """Gets the action for joint number joint. Seven joints in total for the
-        panda agent."""
-        action = np.argmax(self.models[i].predict(obs))
-
-        return action
+        for agent in self.joint_agents:
+            agent.train()
 
     def _gen_actions(self, n):
         return np.linspace(-1, 1, n)
 
-
+@gin.configurable
 class JointAgent:
-    def __init__(self):
+    def __init__(self, buffer, actions, n_discrete_actions):
         self.policy = dqn_model()
-        self.fw_model, self.iw_model, self.embed = ICModule()
+        self.fw_model, self.iv_model, self.embed = ICModule()
+        self.buffer = buffer
+        # todo: figure out how these get set...
+        self.eps = 0
+        self.bsize = 0
+        self.alph = 0
+        self.possible_actions =  self._gen_actions(n_discrete_actions)
+
+    def _gen_actions(self, n_actions):
+        return np.linspace(-1, 1, n_actions)
+
+    def get_action(self, obs):
+        draw = np.random.uniform()
+        if draw <= self.eps:
+            return np.random.choice(self.possible_actions)
+        else:
+            return np.argmax(self.policy.predict(obs))
+
+    def train(self):
+        trans = self._sample()
+        # train inverse model
+        iv_loss = self._train_iv_model(trans)
+        # train forward model
+        fw_loss = self._train_fw_model(trans)
+        # train policy
+        policy_loss = self._train_policy(trans)
+
+    def _sample(self):
+        old_states, new_states, actions, rewards =\
+            self.buffer.get_random_batch(self.bsize)
+        transition = {"old": old_states, "new": new_states,
+                "actions": actions, "rewards": rewards}
+
+        return transition
+
+    def _train_policy(self, trans):
+        pred_rewards_this = self.policy.predict(trans["old"])
+        pred_rewards_next = self.policy.predict(trans["new"])
+        target_rewards = trans["rewards"] + self.alph * np.max(pred_rewards_next)
+        network_targets = pred_rewards_this
+
+        # set the target rewards depending on the actual rewards
+        for i in range(len(trans["actions"])):
+            network_targets[i, int(trans["actions"])] =\
+                target_rewards[i]
+        history = self.policy.fit(trans["old"], network_targets)
+        metrics_dict = {"policy_loss": history.history["loss"][0]}
+
+        return metrics_dict
+
+    def _train_fw_model(self, trans):
+        loss = self.fw_model.fit(
+            [trans["old"], np.expand_dims(trans["actions"],axis=-1)],
+            self.embed.predict(trans["new"])
+        )
+        metrics_dict = {"fw_model_loss": loss}
+
+        return metrics_dict
+
+    def _train_iv_model(self, trans):
+        history = self.iv_model.fit(
+            [trans["old"], trans["new"]], trans["actions"])
+        metrics_dict = {"iv_model_loss": history.history["loss"][0]}
+
+        return metrics_dict
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
