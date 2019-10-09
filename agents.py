@@ -6,16 +6,10 @@ from replaybuffer import Buffer
 @gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
-    def __init__(self, eps, alph, bsize,
-            nactions, obs_shape, max_buffer_size):
-        self.eps = eps
-        self.alph = alph
-        self.bsize = bsize
-        self.nactions = nactions
+    def __init__(self, nactions, obs_shape, max_buffer_size):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
                 nactions=nactions)
-        self.actions = self._gen_actions(nactions)
-        self._setup_models()
+        self._setup_joint_agents()
 
     def store_experience(self, state, next_state, action, reward):
         # do state processing such as convert to greyscale here
@@ -31,9 +25,9 @@ class DQNAgent:
     def _setup_joint_agents(self):
         self.joint_agents = []
         for _ in range(7):
-            self.joint_agents.append(JointAgent())
+            self.joint_agents.append(JointAgent(self.buffer))
 
-    def train(self):
+
         for agent in self.joint_agents:
             agent.train()
 
@@ -42,14 +36,15 @@ class DQNAgent:
 
 @gin.configurable
 class JointAgent:
-    def __init__(self, buffer, actions, n_discrete_actions):
+    def __init__(self, buffer, n_discrete_actions,
+            eps, bsize, alph):
         self.policy = dqn_model()
         self.fw_model, self.iv_model, self.embed = ICModule()
         self.buffer = buffer
         # todo: figure out how these get set...
-        self.eps = 0
-        self.bsize = 0
-        self.alph = 0
+        self.eps = eps
+        self.bsize = bsize
+        self.alph = alph
         self.possible_actions =  self._gen_actions(n_discrete_actions)
 
     def _gen_actions(self, n_actions):
@@ -109,13 +104,6 @@ class JointAgent:
         metrics_dict = {"iv_model_loss": history.history["loss"][0]}
 
         return metrics_dict
-
-
-
-
-
-
-
 
 
 

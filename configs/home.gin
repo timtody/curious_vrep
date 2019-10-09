@@ -4,3 +4,9 @@ inlude 'base.gin'
 run_exp = "/home/julius/projects/curious_vrep/envs/test.ttt"
 vision_handle = "Vision_sensor"
 n_episodes = 1000
+
+# JointAgent
+JointAgent.n_discrete_actions = 10
+JointAgent.eps = 0.15
+JointAgent.bsize = 50
+JointAgent.alph = 0.95
