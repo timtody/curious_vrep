@@ -1,4 +1,4 @@
-inlude 'base.gin'
+include 'base.gin'
 
 # run_exp
 run_exp = "/home/julius/projects/curious_vrep/envs/test.ttt"
