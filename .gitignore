@@ -2,3 +2,6 @@ local/
 # vim specific files
 *.swp
 *.swo
+
+# debug filestest.py
+test.py
