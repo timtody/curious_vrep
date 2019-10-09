@@ -48,6 +48,7 @@ class JointAgent:
         return np.linspace(-1, 1, n_actions)
 
     def get_action(self, obs):
+        obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
             return np.random.choice(self.possible_actions)
