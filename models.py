@@ -10,7 +10,7 @@ tf.compat.v1.disable_eager_execution()
 
 
 @gin.configurable
-def dqn_model(activation, n_actions, input_shape):
+def dqn_model(n_actions, input_shape):
     model = Sequential([
         Conv2D(8, (3, 3), activation="relu", input_shape=input_shape),
         Conv2D(16, (3, 3), activation="relu"),
@@ -44,9 +44,6 @@ class ICModule:
         self.dense2 = Dense(9)
         self.dense_fw_1 = Dense(256)
         self.dense_fw_2 = Dense(289, activation='sigmoid')
-
-        self.compile()
-
 
     def _inverse_embedding(self, input):
         """This inverse embedding is used by the inverse model

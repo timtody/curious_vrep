@@ -1,6 +1,6 @@
 import gin
 import numpy as np
-from models import dqn_model
+from models import dqn_model, ICModule
 from replaybuffer import Buffer
 
 @gin.configurable
@@ -37,7 +37,7 @@ class JointAgent:
     def __init__(self, buffer, n_discrete_actions,
             eps, bsize, alph):
         self.policy = dqn_model()
-        self.fw_model, self.iv_model, self.embed = ICModule()
+        self.fw_model, self.iv_model, self.embed = ICModule().compile()
         self.buffer = buffer
         self.eps = eps
         self.bsize = bsize

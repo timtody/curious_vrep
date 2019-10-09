@@ -1,9 +1,12 @@
-include 'base.gin'
 
 # run_exp
-run_exp = "/home/julius/projects/curious_vrep/envs/test.ttt"
-vision_handle = "Vision_sensor"
-n_episodes = 1000
+run_exp.env_file = "/home/julius/projects/curious_vrep/envs/test.ttt"
+run_exp.vision_handle = "Vision_sensor"
+run_exp.n_episodes = 1000
+
+# DQN model
+dqn_model.input_shape = (64, 64, 3)
+dqn_model.n_actions = 10
 
 # DQN agent
 DQNAgent.obs_shape = (64, 64, 3)
