@@ -1,0 +1,6 @@
+inlude 'base.gin'
+
+# run_exp
+run_exp = "/home/julius/projects/curious_vrep/envs/test.ttt"
+vision_handle = "Vision_sensor"
+n_episodes = 1000
