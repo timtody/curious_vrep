@@ -9,7 +9,7 @@ class DQNAgent:
     def __init__(self, nactions, obs_shape, max_buffer_size):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
                 nactions=nactions)
-        self._setup_joint_agents()
+        self._setup_joint_agents(nactions)
 
     def store_experience(self, state, next_state, action, reward):
         # do state processing such as convert to greyscale here
@@ -17,22 +17,20 @@ class DQNAgent:
 
     def get_action(self, obs):
         action = []
-        for  agent in self.joint_agents:
+        for agent in self.joint_agents:
             action.append(agent.get_action(obs))
 
         return action
 
-    def _setup_joint_agents(self):
+    def _setup_joint_agents(self, nactions):
         self.joint_agents = []
         for _ in range(7):
-            self.joint_agents.append(JointAgent(self.buffer))
+            self.joint_agents.append(JointAgent(self.buffer, nactions))
 
     def train(self):
         for agent in self.joint_agents:
             agent.train()
 
-    def _gen_actions(self, n):
-        return np.linspace(-1, 1, n)
 
 @gin.configurable
 class JointAgent:
@@ -41,7 +39,6 @@ class JointAgent:
         self.policy = dqn_model()
         self.fw_model, self.iv_model, self.embed = ICModule()
         self.buffer = buffer
-        # todo: figure out how these get set...
         self.eps = eps
         self.bsize = bsize
         self.alph = alph
