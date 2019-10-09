@@ -27,7 +27,7 @@ class DQNAgent:
         for _ in range(7):
             self.joint_agents.append(JointAgent(self.buffer))
 
-
+    def train(self):
         for agent in self.joint_agents:
             agent.train()
 
