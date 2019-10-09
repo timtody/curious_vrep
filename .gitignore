@@ -2,6 +2,9 @@ local/
 # vim specific files
 *.swp
 *.swo
+# pyc files and folders
+*.pyc
+__pycache__/
 
 # debug filestest.py
 test.py
