@@ -11,9 +11,13 @@ def run_exp(env_file, vision_handle, n_episodes):
     env = Env(env_file, vision_handle)
 
     state = env.reset()
-    for _ in range(n_episodes):
+    for step in range(n_episodes):
+        print("running a frame...")
         action = agent.get_action(state)
         next_state, reward, done, info = env.step(action)
         # subject to change
         agent.store_experience(state, next_state, action, reward)
         state = next_state
+
+        if step % 50 == 0:
+            agent.train()

@@ -8,7 +8,7 @@ class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
     def __init__(self, nactions, obs_shape, max_buffer_size):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
-                nactions=nactions)
+                nactions=7)
         self._setup_joint_agents(nactions)
 
     def store_experience(self, state, next_state, action, reward):

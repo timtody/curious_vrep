@@ -27,13 +27,13 @@ def dqn_model(n_actions, input_shape):
 
     return model
 
-
+@gin.configurable
 class ICModule:
-    def __init__(self):
-        self.state_t0 = Input(shape=(42, 42, 1))
-        self.state_t1 = Input(shape=(42, 42, 1))
-        self.state_forward = Input(shape=(42, 42, 1))
-        self.state_embedding = Input(shape=(42, 42, 1))
+    def __init__(self, input_shape):
+        self.state_t0 = Input(shape=input_shape)
+        self.state_t1 = Input(shape=input_shape)
+        self.state_forward = Input(shape=input_shape)
+        self.state_embedding = Input(shape=input_shape)
         self.action = Input(shape=(1,))
         self.conv1 = Conv2D(1, (3, 3), strides=(1, 1), activation="relu")
         self.conv2 = Conv2D(16, (3, 3), strides=(1, 1), activation="relu")
