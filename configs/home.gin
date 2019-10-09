@@ -8,6 +8,9 @@ run_exp.n_episodes = 1000
 dqn_model.input_shape = (64, 64, 3)
 dqn_model.n_actions = 10
 
+# ICModule
+ICModule.input_shape = (64, 64, 3)
+
 # DQN agent
 DQNAgent.obs_shape = (64, 64, 3)
 DQNAgent.max_buffer_size = 500
