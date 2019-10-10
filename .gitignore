@@ -1,4 +1,6 @@
 local/
+.mypy_cache/
+*.json
 # vim specific files
 *.swp
 *.swo
