@@ -21,7 +21,7 @@ def dqn_model(n_discrete_actions, input_shape):
         Flatten(),
         Dense(128),
         Dense(128),
-        Dense(n_actions, activation="softmax")
+        Dense(n_discrete_actions, activation="softmax")
     ])
     model.compile(optimizer="adadelta", loss="categorical_crossentropy")
 
