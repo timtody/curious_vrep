@@ -3,13 +3,14 @@ import numpy as np
 from models import dqn_model, ICModule
 from replaybuffer import Buffer
 
+
 @gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
-    def __init__(self, nactions, obs_shape, max_buffer_size):
+    def __init__(self, n_discrete_actions, obs_shape, max_buffer_size):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
-                nactions=7)
-        self._setup_joint_agents(nactions)
+                             nactions=7)
+        self._setup_joint_agents(n_discrete_actions)
 
     def store_experience(self, state, next_state, action, reward):
         # do state processing such as convert to greyscale here
@@ -22,10 +23,10 @@ class DQNAgent:
 
         return action
 
-    def _setup_joint_agents(self, nactions):
+    def _setup_joint_agents(self, n_discrete_actions):
         self.joint_agents = []
         for _ in range(7):
-            self.joint_agents.append(JointAgent(self.buffer, nactions))
+            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions))
 
     def train(self):
         for agent in self.joint_agents:
@@ -34,15 +35,14 @@ class DQNAgent:
 
 @gin.configurable
 class JointAgent:
-    def __init__(self, buffer, n_discrete_actions,
-            eps, bsize, alph):
+    def __init__(self, buffer, n_discrete_actions, eps, bsize, alph):
         self.policy = dqn_model()
         self.fw_model, self.iv_model, self.embed = ICModule().compile()
         self.buffer = buffer
         self.eps = eps
         self.bsize = bsize
         self.alph = alph
-        self.possible_actions =  self._gen_actions(n_discrete_actions)
+        self.possible_actions = self._gen_actions(n_discrete_actions)
 
     def _gen_actions(self, n_actions):
         return np.linspace(-1, 1, n_actions)
@@ -52,8 +52,7 @@ class JointAgent:
         draw = np.random.uniform()
         if draw <= self.eps:
             return np.random.choice(self.possible_actions)
-        else:
-            return np.argmax(self.policy.predict(obs))
+        return np.argmax(self.policy.predict(obs))
 
     def train(self):
         trans = self._sample()
@@ -75,7 +74,8 @@ class JointAgent:
     def _train_policy(self, trans):
         pred_rewards_this = self.policy.predict(trans["old"])
         pred_rewards_next = self.policy.predict(trans["new"])
-        target_rewards = trans["rewards"] + self.alph * np.max(pred_rewards_next)
+        target_rewards = trans["rewards"] +\
+            self.alph * np.max(pred_rewards_next)
         network_targets = pred_rewards_this
 
         # set the target rewards depending on the actual rewards
@@ -89,7 +89,7 @@ class JointAgent:
 
     def _train_fw_model(self, trans):
         loss = self.fw_model.fit(
-            [trans["old"], np.expand_dims(trans["actions"],axis=-1)],
+            [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict(trans["new"])
         )
         metrics_dict = {"fw_model_loss": loss}
@@ -102,12 +102,3 @@ class JointAgent:
         metrics_dict = {"iv_model_loss": history.history["loss"][0]}
 
         return metrics_dict
-
-
-
-
-
-
-
-
-

@@ -10,7 +10,7 @@ tf.compat.v1.disable_eager_execution()
 
 
 @gin.configurable
-def dqn_model(n_actions, input_shape):
+def dqn_model(n_discrete_actions, input_shape):
     model = Sequential([
         Conv2D(8, (3, 3), activation="relu", input_shape=input_shape),
         Conv2D(16, (3, 3), activation="relu"),

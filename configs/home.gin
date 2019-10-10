@@ -4,17 +4,21 @@ run_exp.env_file = "/home/julius/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 1000
 
+# model parameters
+INPUT_SHAPE = (64, 64, 3)
+N_DISCRETE_ACTIONS = 10
+
 # DQN model
-dqn_model.input_shape = (64, 64, 3)
-dqn_model.n_actions = 10
+dqn_model.input_shape = %INPUT_SHAPE
+dqn_model.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # ICModule
-ICModule.input_shape = (64, 64, 3)
+ICModule.input_shape = %INPUT_SHAPE
 
 # DQN agent
-DQNAgent.obs_shape = (64, 64, 3)
+DQNAgent.obs_shape = %INPUT_SHAPE
 DQNAgent.max_buffer_size = 500
-DQNAgent.nactions = 10
+DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
 JointAgent.eps = 0.15
