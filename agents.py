@@ -25,8 +25,8 @@ class DQNAgent:
 
     def _setup_joint_agents(self, n_discrete_actions):
         self.joint_agents = []
-        for _ in range(7):
-            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions))
+        for i in range(7):
+            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
     def train(self):
         for agent in self.joint_agents:
@@ -35,13 +35,14 @@ class DQNAgent:
 
 @gin.configurable
 class JointAgent:
-    def __init__(self, buffer, n_discrete_actions, eps, bsize, alph):
+    def __init__(self, buffer, n_discrete_actions, eps, bsize, alph, index=None):
         self.policy = dqn_model()
         self.fw_model, self.iv_model, self.embed = ICModule().compile()
         self.buffer = buffer
         self.eps = eps
         self.bsize = bsize
         self.alph = alph
+        self.index = index
         self.possible_actions = self._gen_actions(n_discrete_actions)
 
     def _gen_actions(self, n_actions):
@@ -67,7 +68,7 @@ class JointAgent:
         old_states, new_states, actions, rewards =\
             self.buffer.get_random_batch(self.bsize)
         transition = {"old": old_states, "new": new_states,
-                "actions": actions, "rewards": rewards}
+                "actions": actions[:,self.index], "rewards": rewards}
 
         return transition
 
@@ -80,7 +81,7 @@ class JointAgent:
 
         # set the target rewards depending on the actual rewards
         for i in range(len(trans["actions"])):
-            network_targets[i, int(trans["actions"])] =\
+            network_targets[i, int(trans["actions"][i])] =\
                 target_rewards[i]
         history = self.policy.fit(trans["old"], network_targets)
         metrics_dict = {"policy_loss": history.history["loss"][0]}
@@ -97,8 +98,8 @@ class JointAgent:
         return metrics_dict
 
     def _train_iv_model(self, trans):
-        print(f"old:\
-              {trans['old'].shape}\nnew:{trans['new'].shape}\n{trans['actions'].shape}")
+        print(f"old:{trans['old'].shape}\n\
+              new:{trans['new'].shape}\n{trans['actions'].shape}")
         history = self.iv_model.fit(
             [trans["old"], trans["new"]], trans["actions"])
         metrics_dict = {"iv_model_loss": history.history["loss"][0]}

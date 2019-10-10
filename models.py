@@ -5,8 +5,7 @@ from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import Input, Dense, Conv2D, concatenate
 from tensorflow.keras.layers import MaxPool2D, Flatten, Reshape
 from tensorflow.keras.backend import expand_dims
-tf.compat.v1.disable_eager_execution()
-
+#tf.compat.v1.disable_eager_execution()
 
 
 @gin.configurable
@@ -42,8 +41,8 @@ class ICModule:
         self.flatten = Flatten()
         self.dense1 = Dense(128)
         self.dense2 = Dense(n_discrete_actions)
-        self.dense_fw_1 = Dense(256)
-        self.dense_fw_2 = Dense(289, activation='sigmoid')
+        self.dense_fw_1 = Dense(1024)
+        self.dense_fw_2 = Dense(784, activation='sigmoid')
 
     def _inverse_embedding(self, input):
         """This inverse embedding is used by the inverse model
@@ -106,7 +105,7 @@ class ICModule:
         x = concatenate([embed_t0, embed_t1])
         x = self.dense1(x)
         x = self.dense2(x)
-        x = self.flatten(x)
+        #x = self.flatten(x)
 
         return x
 
@@ -164,7 +163,7 @@ class ForwardModel(Model):
 
 class AuxModel:
     def __init__(self, model, trainables):
-        self.trainables = trainables
+        self.trainables = trainables[0] + trainables[1]
         self.model = ForwardModel(model)
         self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
         self.optimizer = tf.keras.optimizers.Adadelta()
@@ -174,7 +173,7 @@ class AuxModel:
         with tf.GradientTape() as tape:
             predictions = self.model(inputs)
             loss = self.loss(labels, predictions)
-        gradients = tape.gradient(loss, self.model.trainable_variables)
+        gradients = tape.gradient(loss, self.trainables)
         self.optimizer.apply_gradients(zip(gradients, self.trainables))
 
         return loss

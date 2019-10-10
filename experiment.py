@@ -20,4 +20,5 @@ def run_exp(env_file, vision_handle, n_episodes):
         state = next_state
 
         if step % 50 == 0:
+            print("########## TRAINING ##############")
             agent.train()
