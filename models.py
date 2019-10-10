@@ -29,7 +29,7 @@ def dqn_model(n_discrete_actions, input_shape):
 
 @gin.configurable
 class ICModule:
-    def __init__(self, input_shape):
+    def __init__(self, input_shape, n_discrete_actions):
         self.state_t0 = Input(shape=input_shape)
         self.state_t1 = Input(shape=input_shape)
         self.state_forward = Input(shape=input_shape)
@@ -41,7 +41,7 @@ class ICModule:
         self.conv4 = Conv2D(1, (3, 3), strides=(2, 2), activation="sigmoid")
         self.flatten = Flatten()
         self.dense1 = Dense(128)
-        self.dense2 = Dense(9)
+        self.dense2 = Dense(n_discrete_actions)
         self.dense_fw_1 = Dense(256)
         self.dense_fw_2 = Dense(289, activation='sigmoid')
 
@@ -55,7 +55,7 @@ class ICModule:
         the agents actions.
 
         Arguments:
-            input {tensor} -- states which get passed into the inverse 
+            input {tensor} -- states which get passed into the inverse
             embedding layer.
 
         Returns:
@@ -121,7 +121,7 @@ class ICModule:
         loss.
         The loss on a per-sample basis is needed, since it's used to change the
         reward of the agent in hindsight. On every step, prediction error needs
-        to be addded to the actual reward supplied by the environment. Refer to 
+        to be addded to the actual reward supplied by the environment. Refer to
         paper for details.
         todo: change to graph mode to improve performance. Note, that this requires
         changes in the Agent.py file because CURAgent calls .numpy() on the resulting

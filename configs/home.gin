@@ -14,6 +14,7 @@ dqn_model.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # ICModule
 ICModule.input_shape = %INPUT_SHAPE
+ICModule.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # DQN agent
 DQNAgent.obs_shape = %INPUT_SHAPE
