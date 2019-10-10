@@ -97,6 +97,8 @@ class JointAgent:
         return metrics_dict
 
     def _train_iv_model(self, trans):
+        print(f"old:\
+              {trans["old"].shape}\nnew:{trans["new"].shape}\ntrans["actions"].shape)
         history = self.iv_model.fit(
             [trans["old"], trans["new"]], trans["actions"])
         metrics_dict = {"iv_model_loss": history.history["loss"][0]}
