@@ -25,6 +25,7 @@ def dqn_model(n_discrete_actions, input_shape):
     model.compile(optimizer="adadelta", loss="categorical_crossentropy")
 
     return model
+    
 
 @gin.configurable
 class ICModule:

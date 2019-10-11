@@ -46,7 +46,7 @@ class JointAgent:
         self.possible_actions = self._gen_actions(n_discrete_actions)
 
     def _gen_actions(self, n_actions):
-        return np.linspace(-1, 1, n_actions)
+        return np.arange(n_actions)
 
     def get_action(self, obs):
         obs = np.expand_dims(obs, axis=0)

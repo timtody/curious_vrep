@@ -25,3 +25,6 @@ DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 JointAgent.eps = 0.15
 JointAgent.bsize = 50
 JointAgent.alph = 0.95
+
+# Environment
+Env.n_discrete_actions = %N_DISCRETE_ACTIONS
