@@ -30,7 +30,7 @@ class DQNAgent:
 
     def train(self, tb_callback=None):
         for agent in self.joint_agents:
-            agent.train()
+            agent.train(tb_callback=tb_callback)
 
 
 @gin.configurable

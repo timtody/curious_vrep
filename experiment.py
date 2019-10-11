@@ -2,7 +2,7 @@ import gin
 from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
-from logger import Logger
+from loggers import Logger
 
 
 @gin.configurable
