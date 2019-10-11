@@ -2,10 +2,12 @@ import gin
 from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
+from logger import Logger
 
 
 @gin.configurable
 def run_exp(env_file, vision_handle, n_episodes):
+    logger = Logger("local/test")
     agent = DQNAgent()
     trainer = Trainer(agent)
     env = Env(env_path=env_file, vis_name=vision_handle, headless=False)
