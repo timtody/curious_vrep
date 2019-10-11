@@ -99,8 +99,6 @@ class JointAgent:
         return metrics_dict
 
     def _train_iv_model(self, trans, tb_callback):
-        print(f"old:{trans['old'].shape}\n\
-              new:{trans['new'].shape}\n{trans['actions'].shape}")
         history = self.iv_model.fit(
             [trans["old"], trans["new"]], trans["actions"],
             callbacks=[tb_callback])
