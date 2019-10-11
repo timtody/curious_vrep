@@ -24,4 +24,4 @@ def run_exp(env_file, vision_handle, n_episodes):
 
         if step % 50 == 0:
             print("########## TRAINING ##############")
-            agent.train()
+            agent.train(tb_callback=logger.tb_callback)
