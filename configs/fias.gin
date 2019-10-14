@@ -1,3 +1,4 @@
+include 'configs/base.gin"
 
 # run_exp
 run_exp.env_file = "/home/taylor/projects/curious_vrep/envs/test.ttt"

@@ -33,9 +33,9 @@ class DQNAgent:
         for i in range(7):
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
-    def train(self, tb_callback=None):
+    def train(self):
         for agent in self.joint_agents:
-            agent.train(tb_callback=tb_callback)
+            agent.train()
 
 
 @gin.configurable
@@ -60,14 +60,17 @@ class JointAgent:
             return np.random.choice(self.possible_actions)
         return np.argmax(self.policy.predict(obs))
 
-    def train(self, tb_callback=None):
+    def train(self):
+        metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        iv_loss = self._train_iv_model(trans, tb_callback)
+        metrics_dict.update(self._train_iv_model(trans, tb_callback))
         # train forward model
-        fw_loss = self._train_fw_model(trans, tb_callback)
+        metrics_dict(self._train_fw_model(trans, tb_callback))
         # train policy
-        policy_loss = self._train_policy(trans, tb_callback)
+        metrics_dict.update(self._train_policy(trans, tb_callback))
+
+        return metrics_dict
 
     def _sample(self):
         old_states, new_states, actions, rewards =\
@@ -77,7 +80,7 @@ class JointAgent:
 
         return transition
 
-    def _train_policy(self, trans, tb_callback):
+    def _train_policy(self, trans):
         pred_rewards_this = self.policy.predict(trans["old"])
         pred_rewards_next = self.policy.predict(trans["new"])
         target_rewards = trans["rewards"] +\
@@ -94,7 +97,7 @@ class JointAgent:
 
         return metrics_dict
 
-    def _train_fw_model(self, trans, tb_callback):
+    def _train_fw_model(self, trans):
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict(trans["new"], callbacks=[tb_callback])
@@ -103,7 +106,7 @@ class JointAgent:
 
         return metrics_dict
 
-    def _train_iv_model(self, trans, tb_callback):
+    def _train_iv_model(self, trans):
         history = self.iv_model.fit(
             [trans["old"], trans["new"]], trans["actions"],
             callbacks=[tb_callback])
