@@ -26,15 +26,14 @@ class Env:
         self.pr = PyRep()
         self.pr.launch(path, headless=headless)
         self.pr.start()
-    
+
     def _setup_actions(self, n_discrete_actions):
         self.poss_actions = np.linspace(-1, 1, n_discrete_actions)
-    
+
     def _convert_action(self, action):
         return self.poss_actions[action]
 
     def step(self, action):
-        action = self._convert_action(action)
         print(f"using action {action}")
         self.robot.set_joint_target_velocities(action)
         self.pr.step()
@@ -56,14 +55,12 @@ if __name__ == "__main__":
     matplotlib.use("TkAgg")
     from matplotlib import pyplot as plt
 
-    env = Env("/home/julius/projects/curious_vrep/envs/test.ttt",
-            "Vision_sensor")
+    env = Env(10, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
+              vis_name="Vision_sensor")
     for i in range(100):
         action = np.random.uniform(size=7)
-        rgb = env.step(action)
-        print(rgb.shape)
-        print(rgb)
-        plt.imshow(rgb)
+        rgb = env.step(action)[0]
+        plt.imshow(np.transpose(rgb, axes=[1, 0, 2]))
         plt.show()
     print(rgb.shape)
     print("donde")

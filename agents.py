@@ -11,6 +11,8 @@ class DQNAgent:
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
                              nactions=7)
         self._setup_joint_agents(n_discrete_actions)
+        # actions transformed for the env
+        self.env_actions = np.linspace(-1, 1, n_discrete_actions)
 
     def store_experience(self, state, next_state, action, reward):
         # do state processing such as convert to greyscale here
@@ -22,6 +24,9 @@ class DQNAgent:
             action.append(agent.get_action(obs))
 
         return action
+
+    def transform_action(self, action):
+        return self.env_actions[action]
 
     def _setup_joint_agents(self, n_discrete_actions):
         self.joint_agents = []
