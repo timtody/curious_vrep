@@ -23,14 +23,21 @@ class Logger:
 class TBLogger:
     def __init__(self, logdir):
         self.logdir = logdir
-        self.writer = tf.summary.create_file_writer(logdir)
+        self.writers = self._create_writers(logdir, 7)
+
+    def _create_writers(self, logdir, n_agents):
+        writers = {}
+        for i in range(n_agents):
+            name = f"{logdir}_agent{i}"
+            writers[i] = tf.summary.create_file_writer(name)
+
+        return writers
 
     def log_metrics(self, metrics_dict, step):
-        with self.writer.as_default():
-            for agent_name, m_dict in metrics_dict.items():
-                for key, value in m_dict.items():
-                    name = self._get_summary_name(agent_name, key)
-                    tf.summary.scalar(name, value, step=step)
+        for agent_name, m_dict in metrics_dict.items():
+            for key, value in m_dict.items():
+                with self.writers[agent_name].as_default():
+                    tf.summary.scalar(key, value, step=step)
 
     def _get_summary_name(self, agent, key):
         return f"{key}_{agent}"
@@ -43,4 +50,4 @@ class VideoLogger:
     def make_video(self, images, name):
         with get_writer(name) as writer:
             for frame in images:
-                writer.append(frame)
+                writer.append_data(frame)
