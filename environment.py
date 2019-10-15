@@ -34,7 +34,6 @@ class Env:
         return self.poss_actions[action]
 
     def step(self, action):
-        print(f"using action {action}")
         self.robot.set_joint_target_velocities(action)
         self.pr.step()
         rgb = self.vision.capture_rgb()

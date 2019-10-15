@@ -34,8 +34,11 @@ class DQNAgent:
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
     def train(self):
-        for agent in self.joint_agents:
-            agent.train()
+        metrics_dict = {}
+        for i, agent in enumerate(self.joint_agents):
+            metrics_dict[i] = agent.train()
+
+        return metrics_dict
 
     def run_for_frames(self, frames=30):
         # todo: implement
@@ -70,7 +73,8 @@ class JointAgent:
         # train inverse model
         metrics_dict.update(self._train_iv_model(trans))
         # train forward model
-        metrics_dict.update(self._train_fw_model(trans))
+        m_dict, fw_loss = self._train_fw_model(trans)
+        metrics_dict.update(m_dict)
         # train policy
         metrics_dict.update(self._train_policy(trans))
 
@@ -104,9 +108,9 @@ class JointAgent:
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict(trans["new"]))
-        metrics_dict = {"fw_model_loss": loss}
+        metrics_dict = {"fw_model_loss": np.mean(loss)}
 
-        return metrics_dict
+        return metrics_dict, loss
 
     def _train_iv_model(self, trans):
         history = self.iv_model.fit(
