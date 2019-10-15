@@ -6,7 +6,7 @@ from loggers import Logger
 
 
 @gin.configurable
-def run_exp(env_file, vision_handle, n_episodes, train_after):
+def run_exp(env_file, vision_handle, n_episodes, train_after, video_after):
     logger = Logger("local/test")
     agent = DQNAgent()
     env = Env(env_path=env_file, vis_name=vision_handle, headless=True)

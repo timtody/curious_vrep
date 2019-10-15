@@ -68,11 +68,11 @@ class JointAgent:
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        metrics_dict.update(self._train_iv_model(trans, tb_callback))
+        metrics_dict.update(self._train_iv_model(trans))
         # train forward model
-        metrics_dict(self._train_fw_model(trans, tb_callback))
+        metrics_dict.update(self._train_fw_model(trans))
         # train policy
-        metrics_dict.update(self._train_policy(trans, tb_callback))
+        metrics_dict.update(self._train_policy(trans))
 
         return metrics_dict
 
@@ -95,8 +95,7 @@ class JointAgent:
         for i in range(len(trans["actions"])):
             network_targets[i, int(trans["actions"][i])] =\
                 target_rewards[i]
-        history = self.policy.fit(trans["old"], network_targets,
-                                  callbacks=[tb_callback])
+        history = self.policy.fit(trans["old"], network_targets)
         metrics_dict = {"policy_loss": history.history["loss"][0]}
 
         return metrics_dict
@@ -104,16 +103,14 @@ class JointAgent:
     def _train_fw_model(self, trans):
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
-            self.embed.predict(trans["new"], callbacks=[tb_callback])
-        )
+            self.embed.predict(trans["new"]))
         metrics_dict = {"fw_model_loss": loss}
 
         return metrics_dict
 
     def _train_iv_model(self, trans):
         history = self.iv_model.fit(
-            [trans["old"], trans["new"]], trans["actions"],
-            callbacks=[tb_callback])
+            [trans["old"], trans["new"]], trans["actions"])
         metrics_dict = {"iv_model_loss": history.history["loss"][0]}
 
         return metrics_dict

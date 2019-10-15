@@ -6,17 +6,23 @@ class Trainer:
         self.next_state = self.state
 
     def record_frames(self, frames):
-        pass
+        out = []
+        for i in range(frames):
+            out.append(self.state)
+            self.step(store=False)
+
+        return out
 
     def _reduce_eps(self):
         pass
 
-    def step(self):
+    def step(self, store=True):
         action = self.agent.get_action(self.state)
         self.next_state, reward, done, info =\
             self.env.step(self.agent.transform_action(action))
-        self.agent.store_experience(self.state, self.next_state, action,
-                                    reward)
+        if store:
+            self.agent.store_experience(self.state, self.next_state, action,
+                                        reward)
         self.state = self.next_state
 
     def set_parameters(self):

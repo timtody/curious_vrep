@@ -3,3 +3,4 @@ JointAgent.n_discrete_actions = 10
 
 # run_exp
 run_exp.train_after = 50
+run_exp.video_after = 100

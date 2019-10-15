@@ -27,7 +27,7 @@ class TBLogger:
 
     def log_metrics(self, metrics_dict, step):
         with self.writer.as_default():
-            for key, value in metrics_dict:
+            for key, value in metrics_dict.items():
                 tf.summary.scalar(key, value, step=step)
 
 
