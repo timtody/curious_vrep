@@ -9,7 +9,15 @@ class Logger:
         self.vid_logger = VideoLogger(logdir)
 
     def log_metrics(self, metrics_dict, step):
-        tb_logger.log_metrics(metrics_dict, step)
+        self.tb_logger.log_metrics(metrics_dict, step)
+
+    def log_video(self, frames, step):
+        video_name = self._get_vid_name(step)
+        self.vid_logger.make_video(frames, video_name)
+
+    def _get_vid_name(self):
+        # todo: implement
+        return "name"
 
 
 class TBLogger:

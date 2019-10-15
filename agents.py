@@ -37,6 +37,10 @@ class DQNAgent:
         for agent in self.joint_agents:
             agent.train()
 
+    def run_for_frames(self, frames=30):
+        # todo: implement
+        pass
+
 
 @gin.configurable
 class JointAgent:
