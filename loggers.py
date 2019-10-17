@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import tensorflow as tf
 from imageio import get_writer
@@ -14,12 +15,12 @@ class Logger:
         self.tb_logger.log_metrics(metrics_dict, step)
 
     def log_video(self, frames, step):
-        video_name = self._get_vid_name()
+        video_name = self._get_vid_name(step)
         self.vid_logger.make_video(frames, video_name)
 
-    def _get_vid_name(self):
-        # todo: implement
-        return "name.mp4"
+    def _get_vid_name(self, step):
+        path = os.path.join(self.logdir, "vid", f"frame{step}.mp4")
+        return path
 
 
 class TBLogger:
@@ -30,7 +31,7 @@ class TBLogger:
     def _create_writers(self, logdir, n_agents):
         writers = {}
         for i in range(n_agents):
-            name = f"{logdir}_agent{i}"
+            name = os.path.join(logdir, "tb", f"agent{i}")
             writers[i] = tf.summary.create_file_writer(name)
 
         return writers
@@ -48,6 +49,9 @@ class TBLogger:
 class VideoLogger:
     def __init__(self, logdir):
         self.logdir = logdir
+        vid_path = os.path.join(logdir, "vid")
+        if not os.path.exists(vid_path):
+            os.mkdir(vid_path)
 
     def make_video(self, images, name):
         frames = self._process_frames(images)
@@ -76,7 +80,6 @@ class VideoLogger:
         frames = (frames * 255).astype(np.uint8)
 
         return frames
-
 
 
 

@@ -60,7 +60,7 @@ if __name__ == "__main__":
         action = np.random.uniform(size=7)
         rgb = env.step(action)[0]
         plt.imshow(np.transpose(rgb, axes=[1, 0, 2]))
-        plt.savefig(f"local/img{i}")
+        plt.savefig(f"local/img/img{i}")
     print(rgb.shape)
     print("donde")
 

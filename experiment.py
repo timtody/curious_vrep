@@ -6,8 +6,9 @@ from loggers import Logger
 
 
 @gin.configurable
-def run_exp(env_file, vision_handle, n_episodes, train_after, video_after):
-    logger = Logger("local/test")
+def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
+            logdir):
+    logger = Logger(logdir)
     agent = DQNAgent()
     env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
     trainer = Trainer(env, agent)
@@ -21,7 +22,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after):
             logger.log_metrics(metrics_dict, step)
 
         if step % video_after == (video_after - 1):
-            print("logging vid")
             frames = trainer.record_frames(30)
             logger.log_video(frames, step)
 
