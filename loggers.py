@@ -1,5 +1,7 @@
+import numpy as np
 import tensorflow as tf
 from imageio import get_writer
+from skimage.color import rgb2gray
 
 
 class Logger:
@@ -48,6 +50,41 @@ class VideoLogger:
         self.logdir = logdir
 
     def make_video(self, images, name):
+        frames = self._process_frames(images)
         with get_writer(name) as writer:
-            for frame in images:
+            for frame in frames:
                 writer.append_data(frame)
+
+    def _process_frames(self, frames):
+        frames = self._to_greyscales(frames)
+        frames = self._rotate_frames(frames)
+        frames = self._scale_frames(frames)
+
+        return frames
+
+    def _rotate_frames(self, frames):
+        frames = np.transpose(frames, axes=[0,2,1])
+
+        return frames
+
+    def _to_greyscales(self, frames):
+        frames = rgb2gray(frames)
+
+        return frames
+
+    def _scale_frames(self, frames):
+        frames = (frames * 255).astype(np.uint8)
+
+        return frames
+
+
+
+
+
+
+
+
+
+
+
+
