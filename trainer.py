@@ -16,6 +16,20 @@ class Trainer:
 
         return out
 
+    def record_frames_with_debug_cams(self, n_frames):
+        vision = np.empty((n_frames, 64, 64, 3))
+        debug0 = np.empty((n_frames, 64, 64, 3))
+        debug1 = np.empty((n_frames, 64, 64, 3))
+
+        for i in range(n_frames):
+            vision[i] = self.state
+            debug_im0, debug_im1 = self.env.get_debug_images()
+            debug0[i] = debug_im0
+            debug1[i] = debug_im1
+            self.step(store=False)
+
+        return vision, debug0, debug1
+
     def _reduce_eps(self):
         pass
 

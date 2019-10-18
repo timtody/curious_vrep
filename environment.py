@@ -7,11 +7,12 @@ from pyrep.objects.vision_sensor import VisionSensor
 @gin.configurable
 class Env:
     def __init__(self, n_discrete_actions, env_path=None,
-                 vis_name=None, headless=True):
+                 vis_name=None, headless=True, debug_cam0=None, debug_cam1=None):
         self._launch(env_path, headless)
         self._setup_robot()
         self._setup_vision(vis_name)
         self._setup_actions(n_discrete_actions)
+        self._setup_debug_cameras(debug_cam0, debug_cam1)
 
     def _setup_robot(self):
         self.robot = Panda()
@@ -33,6 +34,10 @@ class Env:
     def _convert_action(self, action):
         return self.poss_actions[action]
 
+    def _setup_debug_cameras(self, name0, name1):
+        self.vis_debug0 = VisionSensor(name0)
+        self.vis_debug1 = VisionSensor(name1)
+
     def step(self, action):
         self.robot.set_joint_target_velocities(action)
         self.pr.step()
@@ -46,6 +51,12 @@ class Env:
         rgb = self.vision.capture_rgb()
 
         return rgb
+
+    def get_debug_images(self):
+        debug0 = self.vis_debug0.capture_rgb()
+        debug1 = self.vis_debug1.capture_rgb()
+
+        return debug0, debug1
 
 
 if __name__ == "__main__":

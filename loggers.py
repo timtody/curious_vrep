@@ -18,6 +18,10 @@ class Logger:
         video_name = self._get_vid_name(step)
         self.vid_logger.make_video(frames, video_name)
 
+    def log_video_with_debug_cams(self, vis, deb0, deb1, step):
+        name = self._get_vid_name(step)
+        self.vid_logger.make_video_with_debug_cams(vis, deb0, deb1, name)
+
     def _get_vid_name(self, step):
         path = os.path.join(self.logdir, "vid", f"frame{step}.mp4")
         return path
@@ -55,9 +59,14 @@ class VideoLogger:
 
     def make_video(self, images, name):
         frames = self._process_frames(images)
-        with get_writer(name) as writer:
-            for frame in frames:
-                writer.append_data(frame)
+        self._make_video(frames, name)
+
+    def make_video_with_debug_cams(self, vision, debug0, debug1, name):
+        vis = self._process_frames(vision)
+        deb0 = self._process_frames(debug0)
+        deb1 = self._process_frames(debug1)
+        out = self._merge_vision_with_debug_frames(vis, deb0, deb1)
+        self._make_video(out, name)
 
     def _process_frames(self, frames):
         frames = self._to_greyscales(frames)
@@ -65,6 +74,20 @@ class VideoLogger:
         frames = self._scale_frames(frames)
 
         return frames
+
+    def _merge_vision_with_debug_frames(self, vision, debug0, debug1):
+        n_frames = vision.shape[0]
+        out = np.ones(shape=(n_frames, 208, 64), dtype=np.uint8)
+        out[:,0:64,:] = debug0
+        out[:,72:136,:] = vision
+        out[:,144:,:] = debug1
+
+        return np.transpose(out, axes=[0,2,1])
+
+    def _make_video(self, frames, name):
+        with get_writer(name) as writer:
+            for frame in frames:
+                writer.append_data(frame)
 
     def _rotate_frames(self, frames):
         frames = np.transpose(frames, axes=[0,2,1])

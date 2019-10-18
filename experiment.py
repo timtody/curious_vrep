@@ -22,6 +22,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             logger.log_metrics(metrics_dict, step)
 
         if step % video_after == (video_after - 1):
-            frames = trainer.record_frames(30)
-            logger.log_video(frames, step)
+            vis, debug0, debug1 = trainer.record_frames_with_debug_cams(30)
+            logger.log_video_with_debug_cams(vis, debug0, debug1, step)
 
