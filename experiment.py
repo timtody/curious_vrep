@@ -14,7 +14,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     trainer = Trainer(env, agent)
 
     for step in range(n_episodes):
-        print("training a step")
         trainer.step()
 
         if step % train_after == (train_after - 1):
