@@ -5,8 +5,8 @@ run_exp.env_file = "/home/taylor/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 10000
 run_exp.logdir = "/home/taylor/results/curious_memtest"
-run_exp.train_after = 50
-run_exp.video_after = 1000
+run_exp.train_after = 10000
+run_exp.video_after = 10000
 run_exp.n_frames_recorded = 150
 
 # model parameters
