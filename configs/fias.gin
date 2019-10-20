@@ -4,10 +4,10 @@ include "configs/base.gin"
 run_exp.env_file = "/home/taylor/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 10000
-run_exp.logdir = "/home/taylor/results/curious_memtest"
-run_exp.train_after = 10000
-run_exp.video_after = 10000
-run_exp.n_frames_recorded = 150
+run_exp.logdir = "/home/taylor/results/first_test"
+run_exp.train_after = 50
+run_exp.video_after = 100
+run_exp.video_len = 180
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
@@ -27,7 +27,7 @@ DQNAgent.obs_shape = %INPUT_SHAPE
 DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
-JointAgent.eps = 0.20
+JointAgent.eps = 0.1
 JointAgent.bsize = 50
 JointAgent.alph = 0.95
 

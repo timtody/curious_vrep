@@ -8,9 +8,9 @@ from skimage.color import rgb2gray
 class Logger:
     def __init__(self, logdir):
         self.logdir = logdir
+        self._make_dir(logdir)
         self.tb_logger = TBLogger(logdir)
         self.vid_logger = VideoLogger(logdir)
-        self._make_dir(logdir)
 
     def _make_dir(self, logdir):
         if not os.path.exists(logdir):
