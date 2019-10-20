@@ -61,10 +61,10 @@ class JointAgent:
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
+            print(draw, self.eps)
             print("returning")
             return np.random.choice(self.possible_actions)
         predictions = self.policy.predict_on_batch(obs)
-        #tf.keras.backend.clear_session()
 
         return np.argmax(predictions)
 
