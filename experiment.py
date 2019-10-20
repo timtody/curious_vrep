@@ -22,12 +22,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             metrics_dict = agent.train()
             logger.log_metrics(metrics_dict, step)
 
-<<<<<<< HEAD
         if step % video_after == 0:
-=======
-        if step % video_after == (video_after - 1):
-            print("#########################################")
->>>>>>> 61d3a1c1fae31bf087d82d8200596d9f56f7f886
             vis, debug0, debug1 =\
                 trainer.record_frames_with_debug_cams(video_len)
             logger.log_video_with_debug_cams(vis, debug0, debug1, step)
