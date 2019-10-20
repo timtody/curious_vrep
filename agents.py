@@ -1,4 +1,5 @@
 import gin
+import tensorflow as tf
 import numpy as np
 from models import dqn_model, ICModule
 from replaybuffer import Buffer
@@ -40,10 +41,6 @@ class DQNAgent:
 
         return metrics_dict
 
-    def run_for_frames(self, frames=30):
-        # todo: implement
-        pass
-
 
 @gin.configurable
 class JointAgent:
@@ -64,8 +61,12 @@ class JointAgent:
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
+            print("returning")
             return np.random.choice(self.possible_actions)
-        return np.argmax(self.policy.predict(obs))
+        predictions = self.policy.predict_on_batch(obs)
+        #tf.keras.backend.clear_session()
+
+        return np.argmax(predictions)
 
     def train(self):
         metrics_dict = {}
@@ -89,8 +90,8 @@ class JointAgent:
         return transition
 
     def _train_policy(self, trans):
-        pred_rewards_this = self.policy.predict(trans["old"])
-        pred_rewards_next = self.policy.predict(trans["new"])
+        pred_rewards_this = self.policy.predict_on_batch(trans["old"])
+        pred_rewards_next = self.policy.predict_on_batch(trans["new"])
         target_rewards = trans["rewards"] +\
             self.alph * np.max(pred_rewards_next)
         network_targets = pred_rewards_this
@@ -107,7 +108,7 @@ class JointAgent:
     def _train_fw_model(self, trans):
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
-            self.embed.predict(trans["new"]))
+            self.embed.predict_on_batch(trans["new"]))
         metrics_dict = {"fw_model_loss": np.mean(loss)}
 
         return metrics_dict, loss

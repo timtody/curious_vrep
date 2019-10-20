@@ -66,12 +66,12 @@ if __name__ == "__main__":
     from matplotlib import pyplot as plt
 
     env = Env(10, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
-              vis_name="Vision_sensor")
-    for i in range(100):
+              vis_name="Vision_sensor", debug_cam0="debug_vis1",
+              debug_cam1="debug_vis2")
+    for i in range(100000):
         action = np.random.uniform(size=7)
         rgb = env.step(action)[0]
-        plt.imshow(np.transpose(rgb, axes=[1, 0, 2]))
-        plt.savefig(f"local/img/img{i}")
+        print(action)
     print(rgb.shape)
     print("donde")
 

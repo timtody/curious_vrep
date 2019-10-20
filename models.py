@@ -1,4 +1,5 @@
 import gin
+import numpy as np
 import tensorflow as tf
 from tensorflow.keras.losses import mean_squared_error
 from tensorflow.keras import Sequential, Model
@@ -6,7 +7,7 @@ from tensorflow.keras.layers import Input, Dense, Conv2D, concatenate
 from tensorflow.keras.layers import MaxPool2D, Flatten, Reshape
 from tensorflow.keras.backend import expand_dims
 tf.get_logger().setLevel('INFO')
-#tf.compat.v1.disable_eager_execution()
+tf.compat.v1.disable_eager_execution()
 
 
 @gin.configurable
@@ -171,9 +172,9 @@ class AuxModel:
         self.optimizer = tf.keras.optimizers.Adadelta()
 
     def fit(self, inputs, labels):
-        return 0
+        return np.random.randn(len(inputs))
 
-    @tf.function
+   # @tf.function
     def _fit(self, inputs, labels):
         with tf.GradientTape() as tape:
             predictions = self.model(inputs)
