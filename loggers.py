@@ -1,8 +1,10 @@
 import os
+import json
 import numpy as np
 import tensorflow as tf
 from imageio import get_writer
 from skimage.color import rgb2gray
+from collections import defaultdict
 
 
 class Logger:
@@ -32,10 +34,15 @@ class Logger:
         path = os.path.join(self.logdir, "vid", f"frame{step}.mp4")
         return path
 
+    def make_plots(self):
+        self.metrics_logger.make_plots()
+
 
 class MetricsLogger:
     def __init__(self, logdir):
         self._make_dir(logdir)
+        self.writer = self._init_writer(logdir)
+        self.plotter = Plotter(logdir)
 
     def _make_dir(self, logdir):
         path = os.path.join(logdir, plots)
@@ -43,21 +50,61 @@ class MetricsLogger:
             os.mkdir(path)
 
     def log_metrics(self, metrics_dict, step):
-        for agent_name, m_dict in metrics_dict.items():
-            for metric, value in m_dict.items():
-                self._log_value(metric, value, step)
+        self.writer.log_metrics(metrics_dict, step)
 
     def _log_value(self, key, value, step):
+        # do something with the file writers here
         pass
+
+    def make_plots(self):
+        metrics_dict = writer.get_dict()
+        self.plotter.plot(metrics_dict)
+
+    def _init_writer(self, logdir):
+        writer = FileWriter(logdir)
+
+        return writer
+
 
 class FileWriter:
     def __init__(self, path):
         self.path = path
+        self.is_initialized = False
 
-    def write(self):
+    def write(self, key, value, step):
+        if not self.is_initialized:
+            metrics_dict = defaultdict(list)
+            metrics_dict[key].append((step, value))
+            self.is_initialized = True
+            with open(self.path, 'w+') as fp:
+                json.dump(metrics_dict, fp)
+
+        with open(self.path, 'w') as fp:
+            metrics_dict = defaultdict(list, json.load(fp))
+            metrics_dict[key].append((step, value))
+            json.dump(metrics_dict, fp)
+
+    def log_metrics(self, metrics_dict, step):
+        if not self.is_initialized:
+            with open(self.path, 'w+') as fp:
+                json.dump(metrics_dict, fp)
+            self.is_initialized = True
+
+    def _merge_dicts(self, dict0, dict1):
         pass
 
-    def read(self):
+    def get_dict(self):
+        with open(self.path, 'r') as fp:
+            metrics_dict = json.load(fp)
+
+        return metrics_dict
+
+
+class Plotter:
+    def __init__(self, logdir):
+        pass
+
+    def plot(self, metrics_dict):
         pass
 
 
