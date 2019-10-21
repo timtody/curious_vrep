@@ -11,6 +11,7 @@ class Logger:
         self._make_dir(logdir)
         self.tb_logger = TBLogger(logdir)
         self.vid_logger = VideoLogger(logdir)
+        self.metrics_logger = MetricsLogger(logdir)
 
     def _make_dir(self, logdir):
         if not os.path.exists(logdir):
@@ -32,19 +33,45 @@ class Logger:
         return path
 
 
+class MetricsLogger:
+    def __init__(self, logdir):
+        self._make_dir(logdir)
+
+    def _make_dir(self, logdir):
+        path = os.path.join(logdir, plots)
+        if not os.path.exists(path):
+            os.mkdir(path)
+
+    def log_metrics(self, metrics_dict, step):
+        for agent_name, m_dict in metrics_dict.items():
+            for metric, value in m_dict.items():
+                self._log_value(metric, value, step)
+
+    def _log_value(self, key, value, step):
+        pass
+
+
 class TBLogger:
     def __init__(self, logdir):
         self.logdir = logdir
+        self._make_dir(logdir)
         self.writers = self._create_writers(logdir, 7)
+
+    def _make_dir(self, logdir):
+        path = os.path.join(logdir, "tb")
+        if not os.path.exists(path):
+            os.mkdir(path)
 
     def _create_writers(self, logdir, n_agents):
         writers = {}
         for i in range(n_agents):
             name = os.path.join(logdir, "tb", f"agent{i}")
+            print(f"crating logger at path {name}")
             writers[i] = tf.summary.create_file_writer(name)
 
         return writers
 
+    @tf.function
     def log_metrics(self, metrics_dict, step):
         for agent_name, m_dict in metrics_dict.items():
             for key, value in m_dict.items():
@@ -57,7 +84,9 @@ class TBLogger:
 
 class VideoLogger:
     def __init__(self, logdir):
-        self.logdir = logdir
+        self._make_dir(logdir)
+
+    def _make_dir(self, logdir):
         vid_path = os.path.join(logdir, "vid")
         if not os.path.exists(vid_path):
             os.mkdir(vid_path)
