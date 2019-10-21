@@ -99,7 +99,7 @@ class JointAgent:
             network_targets[i, int(trans["actions"][i])] =\
                 target_rewards[i]
         history = self.policy.fit(trans["old"], network_targets)
-        metrics_dict = {"policy_loss": history.history["loss"][0]}
+        metrics_dict = {"policy_loss": history.history["loss"]}
 
         return metrics_dict
 
@@ -107,13 +107,13 @@ class JointAgent:
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict_on_batch(trans["new"]))
-        metrics_dict = {"fw_model_loss": np.mean(loss)}
+        metrics_dict = {"fw_model_loss": [np.mean(loss)]}
 
         return metrics_dict, loss
 
     def _train_iv_model(self, trans):
         history = self.iv_model.fit(
             [trans["old"], trans["new"]], trans["actions"])
-        metrics_dict = {"iv_model_loss": history.history["loss"][0]}
+        metrics_dict = {"iv_model_loss": history.history["loss"]}
 
         return metrics_dict

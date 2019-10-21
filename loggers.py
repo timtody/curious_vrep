@@ -5,13 +5,13 @@ import tensorflow as tf
 from imageio import get_writer
 from skimage.color import rgb2gray
 from collections import defaultdict
+from matplotlib import pyplot as plt
 
 
 class Logger:
     def __init__(self, logdir):
         self.logdir = logdir
         self._make_dir(logdir)
-        self.tb_logger = TBLogger(logdir)
         self.vid_logger = VideoLogger(logdir)
         self.metrics_logger = MetricsLogger(logdir)
 
@@ -20,7 +20,7 @@ class Logger:
             os.mkdir(logdir)
 
     def log_metrics(self, metrics_dict, step):
-        self.tb_logger.log_metrics(metrics_dict, step)
+        self.metrics_logger.log_metrics(metrics_dict, step)
 
     def log_video(self, frames, step):
         video_name = self._get_vid_name(step)
@@ -45,19 +45,15 @@ class MetricsLogger:
         self.plotter = Plotter(logdir)
 
     def _make_dir(self, logdir):
-        path = os.path.join(logdir, plots)
+        path = os.path.join(logdir, "plots")
         if not os.path.exists(path):
             os.mkdir(path)
 
     def log_metrics(self, metrics_dict, step):
         self.writer.log_metrics(metrics_dict, step)
 
-    def _log_value(self, key, value, step):
-        # do something with the file writers here
-        pass
-
     def make_plots(self):
-        metrics_dict = writer.get_dict()
+        metrics_dict = self.writer.get_dict()
         self.plotter.plot(metrics_dict)
 
     def _init_writer(self, logdir):
@@ -68,30 +64,26 @@ class MetricsLogger:
 
 class FileWriter:
     def __init__(self, path):
-        self.path = path
+        self.path = os.path.join(path, "metrics")
         self.is_initialized = False
-
-    def write(self, key, value, step):
-        if not self.is_initialized:
-            metrics_dict = defaultdict(list)
-            metrics_dict[key].append((step, value))
-            self.is_initialized = True
-            with open(self.path, 'w+') as fp:
-                json.dump(metrics_dict, fp)
-
-        with open(self.path, 'w') as fp:
-            metrics_dict = defaultdict(list, json.load(fp))
-            metrics_dict[key].append((step, value))
-            json.dump(metrics_dict, fp)
 
     def log_metrics(self, metrics_dict, step):
         if not self.is_initialized:
             with open(self.path, 'w+') as fp:
                 json.dump(metrics_dict, fp)
             self.is_initialized = True
+        else:
+            with open(self.path, 'r+') as fp:
+                old_dict = json.load(fp)
+                self._merge_dicts(old_dict, metrics_dict)
+                fp.seek(0)
+                json.dump(old_dict, fp)
 
     def _merge_dicts(self, dict0, dict1):
-        pass
+        #dict0 = defaultdict(dict, dict0)
+        for key, value in dict1.items():
+            for subkey, subvalue in value.items():
+                dict0[str(key)][subkey].append(subvalue[0])
 
     def get_dict(self):
         with open(self.path, 'r') as fp:
@@ -105,7 +97,12 @@ class Plotter:
         pass
 
     def plot(self, metrics_dict):
-        pass
+        fig, axes = plt.subplots(ncols=len(metrics_dict))
+        for ax in axes:
+            pass
+        for i, (key, value) in enumerate(metrics_dict.items()):
+            axes[i].plot(value)
+        plt.show()
 
 
 class TBLogger:
@@ -196,8 +193,17 @@ class VideoLogger:
 
 
 
+if __name__ == "__main__":
+    logger = Logger("testlog")
+    m_dict = {0: {"reward": [100], "model_loss": [11]}, 1: {"reward": [0],
+                                                        "model_loss": [1000]}}
+    logger.log_metrics(m_dict, 0)
+    logger.log_metrics(m_dict, 1)
+    logger.log_metrics(m_dict, 2)
+    logger.log_metrics(m_dict, 3)
 
-
+    m_dict = logger.metrics_logger.writer.get_dict()
+    logger.make_plots()
 
 
 
