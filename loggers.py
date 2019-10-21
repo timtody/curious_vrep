@@ -50,6 +50,16 @@ class MetricsLogger:
     def _log_value(self, key, value, step):
         pass
 
+class FileWriter:
+    def __init__(self, path):
+        self.path = path
+
+    def write(self):
+        pass
+
+    def read(self):
+        pass
+
 
 class TBLogger:
     def __init__(self, logdir):
@@ -71,7 +81,6 @@ class TBLogger:
 
         return writers
 
-    @tf.function
     def log_metrics(self, metrics_dict, step):
         for agent_name, m_dict in metrics_dict.items():
             for key, value in m_dict.items():
