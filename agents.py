@@ -37,6 +37,7 @@ class DQNAgent:
     def train(self):
         metrics_dict = {}
         for i, agent in enumerate(self.joint_agents):
+            print(f"training agent {i}")
             metrics_dict[i] = agent.train()
 
         return metrics_dict
@@ -92,14 +93,14 @@ class JointAgent:
         pred_rewards_next = self.policy.predict_on_batch(trans["new"])
         target_rewards = trans["rewards"] +\
             self.alph * np.max(pred_rewards_next)
-        network_targets = pred_rewards_this
+        network_targets = pred_rewards_this.numpy()
 
         # set the target rewards depending on the actual rewards
         for i in range(len(trans["actions"])):
             network_targets[i, int(trans["actions"][i])] =\
                 target_rewards[i]
-        history = self.policy.fit(trans["old"], network_targets)
-        metrics_dict = {"policy_loss": history.history["loss"]}
+        history = self.policy.train_on_batch(trans["old"], network_targets)
+        metrics_dict = {"policy_loss": history}
 
         return metrics_dict
 
@@ -107,13 +108,13 @@ class JointAgent:
         loss = self.fw_model.fit(
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict_on_batch(trans["new"]))
-        metrics_dict = {"fw_model_loss": [np.mean(loss)]}
+        metrics_dict = {"fw_model_loss": np.mean(loss)}
 
         return metrics_dict, loss
 
     def _train_iv_model(self, trans):
-        history = self.iv_model.fit(
+        history = self.iv_model.train_on_batch(
             [trans["old"], trans["new"]], trans["actions"])
-        metrics_dict = {"iv_model_loss": history.history["loss"]}
+        metrics_dict = {"iv_model_loss": history}
 
         return metrics_dict

@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Input, Dense, Conv2D, concatenate
 from tensorflow.keras.layers import MaxPool2D, Flatten, Reshape
 from tensorflow.keras.backend import expand_dims
 tf.get_logger().setLevel('INFO')
-tf.compat.v1.disable_eager_execution()
+#tf.compat.v1.disable_eager_execution()
 
 
 @gin.configurable

@@ -14,11 +14,9 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     trainer = Trainer(env, agent)
 
     for step in range(n_episodes):
-        print(f"running step {step}")
         trainer.step()
 
         if step % train_after == (train_after - 1):
-            print("########################################")
             metrics_dict = agent.train()
             logger.log_metrics(metrics_dict, step)
 

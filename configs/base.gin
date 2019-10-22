@@ -8,4 +8,4 @@ Env.debug_cam1 = "debug_vis2"
 # run_exp
 run_exp.train_after = 100
 run_exp.video_after = 100
-run_exp.video_len = 10
+run_exp.video_len = 180

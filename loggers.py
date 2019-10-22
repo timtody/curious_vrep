@@ -14,13 +14,14 @@ class Logger:
         self._make_dir(logdir)
         self.vid_logger = VideoLogger(logdir)
         self.metrics_logger = MetricsLogger(logdir)
+        self.tb_logger = TBLogger(logdir)
 
     def _make_dir(self, logdir):
         if not os.path.exists(logdir):
             os.mkdir(logdir)
 
     def log_metrics(self, metrics_dict, step):
-        self.metrics_logger.log_metrics(metrics_dict, step)
+        self.tb_logger.log_metrics(metrics_dict, step)
 
     def log_video(self, frames, step):
         video_name = self._get_vid_name(step)
