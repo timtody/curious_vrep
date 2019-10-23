@@ -10,10 +10,10 @@ class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
     def __init__(self, n_discrete_actions, obs_shape, max_buffer_size):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
-                             nactions=7)
+                             nactions=7, vel_min, vel_max)
         self._setup_joint_agents(n_discrete_actions)
         # actions transformed for the env
-        self.env_actions = np.linspace(-1, 1, n_discrete_actions)
+        self.env_actions = np.linspace(vel_min, vel_max, n_discrete_actions)
 
     def store_experience(self, state, next_state, action, reward):
         # do state processing such as convert to greyscale here

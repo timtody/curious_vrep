@@ -17,10 +17,12 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         trainer.step()
 
         if step % train_after == (train_after - 1):
+            print("Training agents")
             metrics_dict = agent.train()
             logger.log_metrics(metrics_dict, step)
 
         if step % video_after == 0:
+            print("logging video")
             vis, debug0, debug1 =\
                 trainer.record_frames_with_debug_cams(video_len)
             logger.log_video_with_debug_cams(vis, debug0, debug1, step)
