@@ -35,8 +35,8 @@ class Trainer:
 
     def step(self, store=True):
         action = self.agent.get_action(self.state)
-        self.next_state, reward, done, info =\
-            self.env.step(self.agent.transform_action(action))
+        self.next_state, reward, done, info = self.env.step(action)
+
         if store:
             self.agent.store_experience(self.state, self.next_state, action,
                                         reward)

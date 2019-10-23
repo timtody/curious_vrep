@@ -1,12 +1,20 @@
+# const
+VEL_MIN = 3
+VEL_MAX = 3
+
 # env
 Env.debug_cam0 = "debug_vis1"
 Env.debug_cam1 = "debug_vis2"
+Env.vel_min = %VEL_MIN
+Env.vel_max = %VEL_MAX
 
 # run_exp
 run_exp.train_after = 100
 run_exp.video_after = 100
 run_exp.video_len = 180
 
+
 # DQNAgent
-DQNAgent.vel_min = 3
-DQNAgent.vel_max = 3
+DQNAgent.vel_min = %VEL_MIN
+DQNAgent.vel_max = %VEL_MIN
+

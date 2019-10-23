@@ -5,12 +5,14 @@ from models import dqn_model, ICModule
 from replaybuffer import Buffer
 
 
+
 @gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
-    def __init__(self, n_discrete_actions, obs_shape, max_buffer_size):
+    def __init__(self, n_discrete_actions, obs_shape, max_buffer_size, vel_min,
+                 vel_max):
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
-                             nactions=7, vel_min, vel_max)
+                             n_agents=1)
         self._setup_joint_agents(n_discrete_actions)
         # actions transformed for the env
         self.env_actions = np.linspace(vel_min, vel_max, n_discrete_actions)
@@ -31,13 +33,12 @@ class DQNAgent:
 
     def _setup_joint_agents(self, n_discrete_actions):
         self.joint_agents = []
-        for i in range(7):
+        for i in range(1):
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
     def train(self):
         metrics_dict = {}
         for i, agent in enumerate(self.joint_agents):
-            print(f"training agent {i}")
             metrics_dict[i] = agent.train()
 
         return metrics_dict
@@ -62,7 +63,9 @@ class JointAgent:
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
+            print("choosing from random")
             return np.random.choice(self.possible_actions)
+        print("choosign from policy")
         predictions = self.policy.predict_on_batch(obs)
 
         return np.argmax(predictions)

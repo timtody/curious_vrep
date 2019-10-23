@@ -17,7 +17,7 @@ class Buffer:
         self.max_buffer_size = max_buffer_size
         self.old_state = np.empty(shape=(max_buffer_size, *observation_shape))
         self.new_state = np.empty(shape=(max_buffer_size, *observation_shape))
-        self.action = np.squeeze(np.empty(shape=(max_buffer_size, n_agents)))
+        self.action = np.empty(shape=(max_buffer_size, n_agents))
         self.reward = np.empty(max_buffer_size)
         self.read_idx = 0
         self.write_idx = 0

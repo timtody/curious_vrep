@@ -24,7 +24,7 @@ DQNAgent.max_buffer_size = 500
 DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
-JointAgent.eps = 0.15
+JointAgent.eps = 0.001
 JointAgent.bsize = 50
 JointAgent.alph = 0.95
 JointAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
