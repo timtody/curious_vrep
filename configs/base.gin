@@ -1,6 +1,3 @@
-# joint agents
-JointAgent.n_discrete_actions = 10
-
 # env
 Env.debug_cam0 = "debug_vis1"
 Env.debug_cam1 = "debug_vis2"

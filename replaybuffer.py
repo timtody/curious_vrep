@@ -2,7 +2,7 @@ import numpy as np
 
 class Buffer:
     def __init__(self, observation_shape, max_buffer_size=500, alpha=2,
-            nactions=1):
+            n_agents=1):
         """Initializes buffer which stores a tuple of observations
            containing old_state, new_state, action, reward of arbitrary sizes
 
@@ -17,7 +17,7 @@ class Buffer:
         self.max_buffer_size = max_buffer_size
         self.old_state = np.empty(shape=(max_buffer_size, *observation_shape))
         self.new_state = np.empty(shape=(max_buffer_size, *observation_shape))
-        self.action = np.squeeze(np.empty(shape=(max_buffer_size, nactions)))
+        self.action = np.squeeze(np.empty(shape=(max_buffer_size, n_agents)))
         self.reward = np.empty(max_buffer_size)
         self.read_idx = 0
         self.write_idx = 0
@@ -27,7 +27,7 @@ class Buffer:
 
     def append(self, old_state, new_state, action, reward):
         """Appends a single batch to the buffer. old_state and
-           new_state must be of the size specified in the 
+           new_state must be of the size specified in the
            constructor.
 
         Arguments:
@@ -54,10 +54,10 @@ class Buffer:
 
         Arguments:
             batch_size {int} -- determines the size of the resulting batch
-        
+
         Raises:
             IndexError: in case I was too stupid to calculate remainder_size
-        
+
         Returns:
             old_state -- batch of old states with size (batch_size x observation_dim0 x observation_dim1)
             new_state -- batch of old states with size (batch_size x observation_dim0 x observation_dim1)
@@ -81,10 +81,10 @@ class Buffer:
             self.read_idx += remainder_size
 
         return old_state, new_state, action, reward
-    
+
     def shuffle(self, seed=False):
         """shuffles the current buffer but only the values which have already been written
-        
+
         Keyword Arguments:
             seed {int} -- pass a seed for debugging purpose if need be (default: {False})
         """
@@ -96,7 +96,7 @@ class Buffer:
         # this exists only to confuse readers
         shuf = lambda x: np.random.shuffle(x[:content_size])
         map(shuf, [self.old_state, self.new_state, self.action, self.reward])
-    
+
     def get_random_batch(self, batch_size):
         if not self.filled:
             indices = np.random.randint(self.write_idx, size=batch_size)
@@ -106,7 +106,7 @@ class Buffer:
         new_state = self.new_state[indices]
         action = self.action[indices]
         reward = self.reward[indices]
-        
+
         return old_state, new_state, action, reward
 
     def get_weighted_batch(self, batch_size):
@@ -114,10 +114,10 @@ class Buffer:
         reward of a transition. The higher the reward, the higher The
         change of sampling this transition will be. Scaling is Softmax
         exponential scaling.
-        
+
         Arguments:
             batch_size {batch_size} -- the size of the sampled transitions
-        
+
         Returns:
             old_state, new_state, action, reward, -- Transitions from the replaybuffer
         """
@@ -141,9 +141,9 @@ class Buffer:
         new_state = self.new_state[indices]
         action = self.action[indices]
         reward = self.reward[indices]
-        
+
         return old_state, new_state, action, reward
-    
+
     def adjust_rewards(self, additional_reward):
         # todo: validate the heck out of this
         # very important!!!
@@ -157,25 +157,25 @@ class Buffer:
             self.reward[:self.write_idx] = additional_reward[remainder:]
         else:
             self.reward[self.write_idx-add_len:self.write_idx] += additional_reward
-    
+
     def reset(self):
         """calls both indx_reset functions to fully reset the buffer"""
         self._reset_read_idx()
         self._reset_write_idx()
-    
+
     def _isempty(self):
         return self.read_idx == self.write_idx
-    
+
     def _isfull(self):
         return self.write_idx == self.max_buffer_size
-    
+
     def _reset_read_idx(self):
         """resets the read_idx to 0"""
         self.read_idx = 0
-    
+
     def _reset_write_idx(self):
         """resets the write_idx to 0"""
         self.write_idx = 0
-    
+
     def __repr__(self):
         pass

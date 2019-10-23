@@ -8,7 +8,7 @@ run_exp.logdir = "/home/julius/results/curious"
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
-N_DISCRETE_ACTIONS = 10
+N_DISCRETE_ACTIONS = 3
 
 # DQN model
 dqn_model.input_shape = %INPUT_SHAPE
@@ -27,6 +27,7 @@ DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 JointAgent.eps = 0.15
 JointAgent.bsize = 50
 JointAgent.alph = 0.95
+JointAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # Environment
 Env.n_discrete_actions = %N_DISCRETE_ACTIONS
