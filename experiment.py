@@ -22,7 +22,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         done = False
 
         while not done:
-            print(global_step)
             action = agent.get_action(state)
             n_state, reward, done, inf = env.step(action)
             agent.store_experience(state, n_state, action, reward)

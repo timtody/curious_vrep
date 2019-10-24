@@ -43,7 +43,7 @@ class ICModule:
         self.conv4 = Conv2D(1, (3, 3), strides=(2, 2), activation="sigmoid")
         self.flatten = Flatten()
         self.dense1 = Dense(128)
-        self.dense2 = Dense(n_discrete_actions)
+        self.dense2 = Dense(n_discrete_actions, activation="softmax")
         self.dense_fw_1 = Dense(1024)
         self.dense_fw_2 = Dense(784, activation='sigmoid')
 
@@ -77,7 +77,7 @@ class ICModule:
         embedding of the next state. By predicting the embedding,
         predictions in pixels space are circumvented. This makes
         1) the problem easier because the embedding space has dimensions
-        of only 288 but also 2) uses the invariant embedding comupted 
+        of only 288 but also 2) uses the invariant embedding comupted
         in the inverse embedding, which should ignore inputs which are
         irrelevant to the agent.
 
@@ -96,7 +96,7 @@ class ICModule:
         """Maps state t0 and state t1 to an action using the
         inverse embedding. Here the submodule 'inverse_embedding'
         should learn a representation which only takes into account
-        things the agent can "change" with his own actions and makes him 
+        things the agent can "change" with his own actions and makes him
         1) robust to input noise and distractors 2) learning a feature space
         of "interactable" things.
 
@@ -137,7 +137,9 @@ class ICModule:
         predicted_action = self._inverse_prediction()
         iv_model = Model(inputs=[self.state_t0, self.state_t1],
             outputs=predicted_action)
-        iv_model.compile(optimizer="rmsprop", loss="sparse_categorical_crossentropy")
+        iv_model.compile(optimizer="rmsprop",
+                         loss="sparse_categorical_crossentropy",
+                         metrics=["sparse_categorical_accuracy"])
 
         # forward model (predicts: s_t x a -> s_t+1)
         # trun off training for the embedded model when constructing

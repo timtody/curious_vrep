@@ -46,10 +46,8 @@ class Trainer:
                                         reward)
         self.state = self.next_state
 
-        print(reward)
         if done:
             self.env.reset()
-            print("DONE!!!!")
 
     def set_parameters(self):
         pass

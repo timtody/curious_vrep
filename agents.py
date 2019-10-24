@@ -85,7 +85,7 @@ class JointAgent:
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        #metrics_dict.update(self._train_iv_model(trans))
+        metrics_dict.update(self._train_iv_model(trans))
         # train forward model
         #m_dict, fw_loss = self._train_fw_model(trans)
         #metrics_dict.update(m_dict)
@@ -128,8 +128,8 @@ class JointAgent:
         return metrics_dict, loss
 
     def _train_iv_model(self, trans):
-        history = self.iv_model.train_on_batch(
+        loss, acc = self.iv_model.train_on_batch(
             [trans["old"], trans["new"]], trans["actions"])
-        metrics_dict = {"iv_model_loss": history}
+        metrics_dict = {"iv_model_loss": loss, "iv_model_acc": acc}
 
         return metrics_dict
