@@ -43,14 +43,21 @@ class DQNAgent:
 
         return metrics_dict
 
+    def decrease_eps(self, n_training_steps):
+        for agent in self.joint_agents:
+            agent.decrease_eps(n_training_steps)
+
 
 @gin.configurable
 class JointAgent:
-    def __init__(self, buffer, n_discrete_actions, eps, bsize, alph, index=None):
+    def __init__(self, buffer, n_discrete_actions, start_eps, target_eps,
+                 bsize, alph, index=None):
         self.policy = dqn_model()
         self.fw_model, self.iv_model, self.embed = ICModule().compile()
         self.buffer = buffer
-        self.eps = eps
+        self.eps = start_eps
+        self.start_eps = start_eps
+        self.target_eps = target_eps
         self.bsize = bsize
         self.alph = alph
         self.index = index
@@ -59,13 +66,17 @@ class JointAgent:
     def _gen_actions(self, n_actions):
         return np.arange(n_actions)
 
+    def decrease_eps(self, n_training_steps):
+        if self.eps >= self.target_eps:
+            self.eps -= (self.start_eps - self.target_eps) / (n_training_steps
+                                                              * 0.9)
+
     def get_action(self, obs):
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
-            print("choosing from random")
-            return np.random.choice(self.possible_actions)
-        print("choosign from policy")
+            action = np.random.choice(self.possible_actions)
+            return action
         predictions = self.policy.predict_on_batch(obs)
 
         return np.argmax(predictions)
@@ -74,12 +85,13 @@ class JointAgent:
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        metrics_dict.update(self._train_iv_model(trans))
+        #metrics_dict.update(self._train_iv_model(trans))
         # train forward model
-        m_dict, fw_loss = self._train_fw_model(trans)
-        metrics_dict.update(m_dict)
+        #m_dict, fw_loss = self._train_fw_model(trans)
+        #metrics_dict.update(m_dict)
         # train policy
         metrics_dict.update(self._train_policy(trans))
+        print(f"policy loss is {metrics_dict['policy_loss']}")
 
         return metrics_dict
 

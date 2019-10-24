@@ -27,7 +27,7 @@ class Logger:
         video_name = self._get_vid_name(step)
         self.vid_logger.make_video(frames, video_name)
 
-    def log_video_with_debug_cams(self, vis, deb0, deb1, step):
+    def log_vid_debug_cams(self, vis, deb0, deb1, step):
         name = self._get_vid_name(step)
         self.vid_logger.make_video_with_debug_cams(vis, deb0, deb1, name)
 

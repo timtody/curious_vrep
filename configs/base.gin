@@ -1,5 +1,5 @@
 # const
-VEL_MIN = 3
+VEL_MIN = -3
 VEL_MAX = 3
 
 # env
@@ -9,8 +9,8 @@ Env.vel_min = %VEL_MIN
 Env.vel_max = %VEL_MAX
 
 # run_exp
-run_exp.train_after = 100
-run_exp.video_after = 100
+run_exp.train_after = 500
+run_exp.video_after = 1000
 run_exp.video_len = 180
 
 

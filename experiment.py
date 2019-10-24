@@ -13,17 +13,31 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
     trainer = Trainer(env, agent)
 
+    n_training_steps = n_episodes // train_after
+
+    global_step = 0
     for step in range(n_episodes):
-        trainer.step()
+        print(f"episonde {step}")
+        state = env.reset()
+        done = False
 
-        if step % train_after == (train_after - 1):
-            print("Training agents")
-            metrics_dict = agent.train()
-            logger.log_metrics(metrics_dict, step)
+        while not done:
+            print(global_step)
+            action = agent.get_action(state)
+            n_state, reward, done, inf = env.step(action)
+            agent.store_experience(state, n_state, action, reward)
+            state = n_state
 
-        if step % video_after == 0:
-            print("logging video")
-            vis, debug0, debug1 =\
-                trainer.record_frames_with_debug_cams(video_len)
-            logger.log_video_with_debug_cams(vis, debug0, debug1, step)
+            if global_step % train_after == (train_after - 1):
+                print("Training agents")
+                metrics_dict = agent.train()
+                logger.log_metrics(metrics_dict, global_step)
+                agent.decrease_eps(n_training_steps)
+                print(f"agent eps: {agent.joint_agents[0].eps}")
 
+            if global_step % video_after == 0:
+                print("logging video")
+                vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
+                logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
+
+            global_step += 1

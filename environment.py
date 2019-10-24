@@ -3,6 +3,7 @@ import numpy as np
 from pyrep import PyRep
 from pyrep.robots.arms.panda import Panda
 from pyrep.objects.vision_sensor import VisionSensor
+from pyrep.objects.shape import Shape
 
 @gin.configurable
 class Env:
@@ -14,12 +15,17 @@ class Env:
         self._setup_vision(vis_name)
         self._setup_actions(n_discrete_actions, vel_min, vel_max)
         self._setup_debug_cameras(debug_cam0, debug_cam1)
+        self._setup_target()
+
+    def _setup_target(self):
+        self.target = Shape('target')
 
     def _setup_robot(self):
         self.robot = Panda()
         self.joint_init = self.robot.get_joint_positions()
         self.robot.set_control_loop_enabled(False)
         self.robot.set_motor_locked_at_zero_velocity(True)
+        self.tip = self.robot.get_tip()
 
     def _setup_vision(self, vis_name):
         self.vision = VisionSensor(vis_name)
@@ -44,10 +50,25 @@ class Env:
         action = [0, 0, 0, action[0], 0, 0, 0]
         self.robot.set_joint_target_velocities(action)
         self.pr.step()
+        reward = self._calculate_reward()
+
+        if reward >= -0.15:
+            done = True
+            reward = 1
+        else:
+            done = False
         rgb = self.vision.capture_rgb()
 
         # todo: change to include more meaningful info
-        return rgb, 0, False, {}
+        return rgb, reward, done, {}
+
+    def _calculate_reward(self):
+        ax, ay, az = self.tip.get_position()
+        tx, ty, tz = self.target.get_position()
+        # Reward is negative distance to target
+        reward = -np.sqrt((ax - tx) ** 2 + (ay - ty) ** 2 + (az - tz) ** 2)
+
+        return reward
 
     def reset(self):
         self.robot.set_joint_positions(self.joint_init)
@@ -68,16 +89,15 @@ if __name__ == "__main__":
     matplotlib.use("TkAgg")
     from matplotlib import pyplot as plt
 
-    env = Env(10, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
+    env = Env(3, -3, 3, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
               vis_name="Vision_sensor", debug_cam0="debug_vis1",
               debug_cam1="debug_vis2", headless=False)
     for i in range(100000):
-        action = np.zeros(7)
-        action[3] = -1
-        rgb = env.step(action)[0]
+        action = np.random.choice([0,1,2])
+        rgb, reward, done, info = env.step([action])
+        print(reward)
         plt.imshow(rgb)
         plt.show()
-        print(action)
     print(rgb.shape)
     print("done")
 

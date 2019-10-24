@@ -24,7 +24,7 @@ def dqn_model(n_discrete_actions, input_shape):
         Dense(128),
         Dense(n_discrete_actions)
     ])
-    model.compile(optimizer="adam", loss="categorical_crossentropy")
+    model.compile(optimizer="adam", loss="mse")
 
     return model
 

@@ -8,7 +8,12 @@ class Trainer:
         self.state = env.reset()
         self.next_state = self.state
 
-    def record_frames(self, frames):
+    def record_frames(self, n_frames, debug_cams=True):
+        if debug_cams:
+            return self._record_frames_with_debug_cams(n_frames)
+        return self._record_frames(n_frames)
+
+    def _record_frames(self, frames):
         out = np.empty((frames, 64, 64, 3))
         for i in range(frames):
             out[i] = self.state
@@ -16,7 +21,7 @@ class Trainer:
 
         return out
 
-    def record_frames_with_debug_cams(self, n_frames):
+    def _record_frames_with_debug_cams(self, n_frames):
         vision = np.empty((n_frames, 64, 64, 3))
         debug0 = np.empty((n_frames, 64, 64, 3))
         debug1 = np.empty((n_frames, 64, 64, 3))
@@ -36,11 +41,15 @@ class Trainer:
     def step(self, store=True):
         action = self.agent.get_action(self.state)
         self.next_state, reward, done, info = self.env.step(action)
-
         if store:
             self.agent.store_experience(self.state, self.next_state, action,
                                         reward)
         self.state = self.next_state
+
+        print(reward)
+        if done:
+            self.env.reset()
+            print("DONE!!!!")
 
     def set_parameters(self):
         pass
