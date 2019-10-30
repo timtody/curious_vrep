@@ -17,7 +17,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
 
     global_step = 0
     for step in range(n_episodes):
-        print(f"episonde {step}")
+        print(f"episode {step}")
         state = env.reset()
         done = False
 

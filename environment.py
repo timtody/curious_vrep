@@ -91,11 +91,11 @@ if __name__ == "__main__":
 
     env = Env(3, -3, 3, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
               vis_name="Vision_sensor", debug_cam0="debug_vis1",
-              debug_cam1="debug_vis2", headless=False)
+              debug_cam1="debug_vis2", headless=True)
     for i in range(100000):
         action = np.random.choice([0,1,2])
+        action = [0]
         rgb, reward, done, info = env.step([action])
-        print(reward)
         plt.imshow(rgb)
         plt.show()
     print(rgb.shape)
