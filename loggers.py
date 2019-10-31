@@ -23,6 +23,9 @@ class Logger:
     def log_metrics(self, metrics_dict, step):
         self.tb_logger.log_metrics(metrics_dict, step)
 
+    def log_network_weights(self, network, step):
+        self.tb_logger.log_network_weights(network, step)
+
     def log_video(self, frames, step):
         video_name = self._get_vid_name(step)
         self.vid_logger.make_video(frames, video_name)
@@ -131,6 +134,14 @@ class TBLogger:
             for key, value in m_dict.items():
                 with self.writers[agent_name].as_default():
                     tf.summary.scalar(key, value, step=step)
+
+    def log_network_weights(self, network, step):
+        with self.writers[0].as_default():
+            for layer in network.layers:
+                #layer = network.get_layer(layer_name)
+                weights = layer.weights
+                for weight in weights:
+                    tf.summary.histogram(weight.name, weight, step=step)
 
     def _get_summary_name(self, agent, key):
         return f"{key}_{agent}"

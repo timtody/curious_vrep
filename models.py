@@ -37,10 +37,10 @@ class ICModule:
         self.state_forward = Input(shape=input_shape)
         self.state_embedding = Input(shape=input_shape)
         self.action = Input(shape=(1,))
-        self.conv1 = Conv2D(1, (3, 3), strides=(1, 1), activation="relu")
-        self.conv2 = Conv2D(32, (3, 3), strides=(1, 1), activation="relu")
-        self.conv3 = Conv2D(32, (3, 3), strides=(1, 1), activation="relu")
-        self.conv4 = Conv2D(1, (3, 3), strides=(2, 2), activation="relu")
+        self.conv1 = Conv2D(1, (3, 3), strides=(1, 1), activation="elu")
+        self.conv2 = Conv2D(32, (3, 3), strides=(1, 1), activation="elu")
+        self.conv3 = Conv2D(32, (3, 3), strides=(1, 1), activation="elu")
+        self.conv4 = Conv2D(1, (3, 3), strides=(2, 2), activation="elu")
         self.flatten = Flatten()
         self.dense1 = Dense(128)
         self.dense2 = Dense(n_discrete_actions, activation="softmax")
@@ -137,7 +137,7 @@ class ICModule:
         predicted_action = self._inverse_prediction()
         iv_model = Model(inputs=[self.state_t0, self.state_t1],
             outputs=predicted_action)
-        iv_model.compile(optimizer="rmsprop",
+        iv_model.compile(optimizer="adam",
                          loss="sparse_categorical_crossentropy",
                          metrics=["sparse_categorical_accuracy"])
 

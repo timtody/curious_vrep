@@ -85,10 +85,10 @@ class JointAgent:
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        #metrics_dict.update(self._train_iv_model(trans))
+        metrics_dict.update(self._train_iv_model(trans))
         # train forward model
-        m_dict, fw_loss = self._train_fw_model(trans)
-        metrics_dict.update(m_dict)
+        #m_dict, fw_loss = self._train_fw_model(trans)
+        #metrics_dict.update(m_dict)
         # train policy
         #metrics_dict.update(self._train_policy(trans))
         #print(f"policy loss is {metrics_dict['policy_loss']}")
@@ -124,6 +124,7 @@ class JointAgent:
             [trans["old"], np.expand_dims(trans["actions"], axis=-1)],
             self.embed.predict_on_batch(trans["new"]))
         metrics_dict = {"fw_model_loss": np.mean(loss)}
+        #metrics_dict.update("")
 
         return metrics_dict, loss
 
