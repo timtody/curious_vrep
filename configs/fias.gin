@@ -5,13 +5,10 @@ run_exp.env_file = "/home/taylor/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 10000
 run_exp.logdir = "/home/taylor/results/first_test"
-run_exp.train_after = 50
-run_exp.video_after = 100
-run_exp.video_len = 180
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
-N_DISCRETE_ACTIONS = 10
+N_DISCRETE_ACTIONS = 3
 
 # DQN model
 dqn_model.input_shape = %INPUT_SHAPE
@@ -27,9 +24,11 @@ DQNAgent.obs_shape = %INPUT_SHAPE
 DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
-JointAgent.eps = 0.1
-JointAgent.bsize = 50
+JointAgent.start_eps = 1.0
+JointAgent.target_eps = 1.0
+JointAgent.bsize = 500
 JointAgent.alph = 0.95
+JointAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # Environment
 Env.n_discrete_actions = %N_DISCRETE_ACTIONS

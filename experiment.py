@@ -16,7 +16,7 @@ def save_debug_img(pre_train, post_train, global_step):
     plot, axes = plt.subplots(ncols=2)
     axes[0].imshow(pre_train.numpy().squeeze().reshape((28, 28)))
     axes[1].imshow(post_train.numpy().squeeze().reshape((28, 28)))
-    path = f"/home/julius/results/img/check_iv_step_{global_step}"
+    path = f"/home/taylor/results/img/check_iv_step_{global_step}"
     plt.savefig(path)
     plt.close()
 
