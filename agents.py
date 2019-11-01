@@ -122,7 +122,7 @@ class JointAgent:
     def _train_fw_model(self, trans):
         target_embedding = self.embed.predict_on_batch(trans["new"])
         loss = self.fw_model.fit(
-            [trans["old"], np.expand_dims(trans["actions"], axis=-1)], target_embedding]))
+            [trans["old"], np.expand_dims(trans["actions"], axis=-1)], target_embedding)
         metrics_dict = {"fw_model_loss": np.mean(loss)}
 
         return metrics_dict, loss
