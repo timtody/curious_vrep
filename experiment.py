@@ -38,7 +38,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         print(f"episode {step}")
         state = env.reset()
         done = False
-
         while not done:
             action = agent.get_action(state)
             n_state, reward, done, inf = env.step(action)

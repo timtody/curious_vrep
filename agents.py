@@ -85,7 +85,7 @@ class JointAgent:
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        #metrics_dict.update(self._train_iv_model(trans))
+        metrics_dict.update(self._train_iv_model(trans))
         # train forward model
         m_dict, fw_loss = self._train_fw_model(trans)
         metrics_dict.update(m_dict)
