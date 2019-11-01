@@ -171,7 +171,7 @@ class AuxModel:
         self.trainables = trainables[0] + trainables[1]
         self.model = ForwardModel(model)
         self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
-        self.optimizer = tf.keras.optimizers.Adadelta()
+        self.optimizer = tf.keras.optimizers.Adam()
 
     def fit(self, inputs, labels):
         return np.random.randn(len(inputs))
