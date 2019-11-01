@@ -173,11 +173,10 @@ class AuxModel:
         self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
         self.optimizer = tf.keras.optimizers.Adam()
 
-    def fit(self, inputs, labels):
+    def _fit(self, inputs, labels):
         return np.random.randn(len(inputs))
 
-   # @tf.function
-    def _fit(self, inputs, labels):
+    def fit(self, inputs, labels):
         with tf.GradientTape() as tape:
             predictions = self.model(inputs)
             loss = self.loss(labels, predictions)
