@@ -38,14 +38,14 @@ class ICModule:
         self.state_embedding = Input(shape=input_shape)
         self.action = Input(shape=(1,))
         self.conv1 = Conv2D(1, (3, 3), strides=(1, 1), activation="elu")
-        self.conv2 = Conv2D(32, (3, 3), strides=(1, 1), activation="elu")
-        self.conv3 = Conv2D(32, (3, 3), strides=(1, 1), activation="elu")
+        self.conv2 = Conv2D(32, (3, 3), strides=(2, 2), activation="elu")
+        self.conv3 = Conv2D(32, (3, 3), strides=(2, 2), activation="elu")
         self.conv4 = Conv2D(1, (3, 3), strides=(2, 2), activation="elu")
         self.flatten = Flatten()
         self.dense1 = Dense(128)
         self.dense2 = Dense(n_discrete_actions, activation="softmax")
-        self.dense_fw_1 = Dense(1024)
-        self.dense_fw_2 = Dense(784)
+        self.dense_fw_1 = Dense(256)
+        self.dense_fw_2 = Dense(196)
 
     def _inverse_embedding(self, input):
         """This inverse embedding is used by the inverse model
