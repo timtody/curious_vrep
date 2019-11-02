@@ -45,7 +45,7 @@ class ICModule:
         self.dense1 = Dense(128)
         self.dense2 = Dense(n_discrete_actions, activation="softmax")
         self.dense_fw_1 = Dense(256)
-        self.dense_fw_2 = Dense(196)
+        self.dense_fw_2 = Dense(121)
 
     def _inverse_embedding(self, input):
         """This inverse embedding is used by the inverse model
