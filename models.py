@@ -5,6 +5,7 @@ from tensorflow.keras.losses import mean_squared_error
 from tensorflow.keras import Sequential, Model
 from tensorflow.keras.layers import Input, Dense, Conv2D, concatenate
 from tensorflow.keras.layers import MaxPool2D, Flatten, Reshape
+from tensorflow.keras.layers import BatchNormalization
 from tensorflow.keras.backend import expand_dims
 tf.get_logger().setLevel('INFO')
 #tf.compat.v1.disable_eager_execution()
@@ -41,6 +42,10 @@ class ICModule:
         self.conv2 = Conv2D(32, (3, 3), strides=(2, 2), activation="elu")
         self.conv3 = Conv2D(32, (3, 3), strides=(1, 1), activation="elu")
         self.conv4 = Conv2D(1, (3, 3), strides=(1, 1), activation="elu")
+        self.bnorm1 = BatchNormalization()
+        self.bnorm2 = BatchNormalization()
+        self.bnorm3 = BatchNormalization()
+        self.bnorm4 = BatchNormalization()
         self.flatten = Flatten()
         self.dense1 = Dense(128)
         self.dense2 = Dense(n_discrete_actions, activation="softmax")
@@ -64,9 +69,13 @@ class ICModule:
             tensor -- shape = (289,) (todo: check dims)
          """
         x = self.conv1(input)
+        x = self.bnorm1(x)
         x = self.conv2(x)
+        x = self.bnorm2(x)
         x = self.conv3(x)
+        x = self.bnorm3(x)
         x = self.conv4(x)
+        x = self.bnorm4(x)
         x = self.flatten(x)
 
         return x
