@@ -50,7 +50,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 metrics_dict = agent.train()
                 logger.log_network_weights(jt_agent.embed, global_step)
                 post_train= jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
-                save_debug_img(pre_train, post_train, global_step)
+                #save_debug_img(pre_train, post_train, global_step)
                 logger.log_metrics(metrics_dict, global_step)
                 agent.decrease_eps(n_training_steps)
                 print(f"agent eps: {agent.joint_agents[0].eps}")
