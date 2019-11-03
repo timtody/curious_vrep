@@ -5,6 +5,8 @@ from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
 from loggers import Logger
+from transition import Transition
+
 
 def minmax(pre, post):
 
@@ -23,7 +25,8 @@ def save_debug_img(pre_train, post_train, global_step):
 
 @gin.configurable
 def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
-            video_len, train_iv, train_fw, train_policy, logdir=None):
+            video_len, train_iv, train_fw, train_policy, show_distractor_after,
+            logdir=None):
     logger = Logger(logdir)
     agent = DQNAgent()
     env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
@@ -36,14 +39,22 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     logger.log_network_weights(jt_agent.embed, 0)
     for step in range(n_episodes):
         print(f"episode {step}")
+
+
         state = env.reset()
         done = False
         while not done:
             action = agent.get_action(state)
             n_state, reward, done, inf = env.step(action)
-            agent.store_experience(state, n_state, action, reward)
-            state = n_state
 
+            transition = Transition()
+            transition.set_state_new(n_state)
+            transition.set_state_old(state)
+            transition.set_reward(reward)
+            transition.set_action(action)
+            agent.store_experience(transition)
+
+            state = n_state
             if global_step % train_after == (train_after - 1):
                 print("Training agents")
                 pre_train = jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
@@ -59,5 +70,9 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 print("logging video")
                 vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
                 logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
+
+            if global_step % show_distractor_after == (show_distractor_after - 1):
+                print("SHOWING DISTRACTOR")
+                env.show_distractor()
 
             global_step += 1

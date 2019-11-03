@@ -16,6 +16,11 @@ class Env:
         self._setup_actions(n_discrete_actions, vel_min, vel_max)
         self._setup_debug_cameras(debug_cam0, debug_cam1)
         self._setup_target()
+        self._setup_distractor()
+
+    def _setup_distractor(self):
+        self.distractor = Shape('distractor')
+        self.hide_distractor()
 
     def _setup_target(self):
         self.target = Shape('target')
@@ -61,6 +66,12 @@ class Env:
 
         # todo: change to include more meaningful info
         return rgb, reward, done, {}
+
+    def show_distractor(self):
+        self.distractor.set_position([0.15, 0., 1.])
+
+    def hide_distractor(self):
+        self.distractor.set_position([-1.5, 0., 1.])
 
     def _calculate_reward(self):
         ax, ay, az = self.tip.get_position()
