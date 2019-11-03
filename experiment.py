@@ -5,6 +5,8 @@ from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
 from loggers import Logger
+from transition import Transition
+
 
 def minmax(pre, post):
 
@@ -41,9 +43,15 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         while not done:
             action = agent.get_action(state)
             n_state, reward, done, inf = env.step(action)
-            agent.store_experience(state, n_state, action, reward)
-            state = n_state
 
+            transition = Transition()
+            transition.set_state_new(n_state)
+            transition.set_state_old(state)
+            transition.set_reward(reward)
+            transition.set_action(action)
+            agent.store_experience(transition)
+
+            state = n_state
             if global_step % train_after == (train_after - 1):
                 print("Training agents")
                 pre_train = jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))

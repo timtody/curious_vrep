@@ -17,8 +17,14 @@ class DQNAgent:
         # actions transformed for the env
         self.env_actions = np.linspace(vel_min, vel_max, n_discrete_actions)
 
-    def store_experience(self, state, next_state, action, reward):
+    def store_experience(self, transition):
+        state = transition.state_old
+        next_state = transition.state_new
+        action = transition.action
+        reward = transition.reward
+        
         # do state processing such as convert to greyscale here
+        # todo: change buffer.append() signature to append(transition) 
         self.buffer.append(state, next_state, action, reward)
 
     def get_action(self, obs):
