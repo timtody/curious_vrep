@@ -20,6 +20,7 @@ class Env:
 
     def _setup_distractor(self):
         self.distractor = Shape('distractor')
+        self.hide_distractor()
 
     def _setup_target(self):
         self.target = Shape('target')
@@ -67,10 +68,10 @@ class Env:
         return rgb, reward, done, {}
 
     def show_distractor(self):
-        self.distractor.set_position([0.15, 0., 0.])
+        self.distractor.set_position([0.15, 0., 1.])
 
     def hide_distractor(self):
-        self.distractor.set_position([-1.5, 0., 0.])
+        self.distractor.set_position([-1.5, 0., 1.])
 
     def _calculate_reward(self):
         ax, ay, az = self.tip.get_position()
