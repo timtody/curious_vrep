@@ -36,7 +36,7 @@ class DQNAgent:
         for i in range(1):
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
-    def train(self, train_iv=True, train_fw=True, train_policy=True):
+    def train(self, train_iv, train_fw, train_policy):
         metrics_dict = {}
         for i, agent in enumerate(self.joint_agents):
             metrics_dict[i] = agent.train(train_iv=train_iv, train_fw=train_fw,

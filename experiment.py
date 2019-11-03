@@ -47,7 +47,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             if global_step % train_after == (train_after - 1):
                 print("Training agents")
                 pre_train = jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
-                metrics_dict = agent.train()
+                metrics_dict = agent.train(train_iv, train_fw, train_policy)
                 logger.log_network_weights(jt_agent.embed, global_step)
                 post_train= jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
                 #save_debug_img(pre_train, post_train, global_step)
