@@ -36,10 +36,11 @@ class DQNAgent:
         for i in range(1):
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
-    def train(self):
+    def train(self, train_iv=True, train_fw=True, train_policy=True):
         metrics_dict = {}
         for i, agent in enumerate(self.joint_agents):
-            metrics_dict[i] = agent.train()
+            metrics_dict[i] = agent.train(train_iv=train_iv, train_fw=train_fw,
+                                          train_policy=train_policy)
 
         return metrics_dict
 
@@ -81,16 +82,19 @@ class JointAgent:
 
         return np.argmax(predictions)
 
-    def train(self):
+    def train(self, train_iv=True, train_fw=True, train_policy=True):
         metrics_dict = {}
         trans = self._sample()
         # train inverse model
-        metrics_dict.update(self._train_iv_model(trans))
+        if train_iv:
+            metrics_dict.update(self._train_iv_model(trans))
         # train forward model
-        m_dict, fw_loss = self._train_fw_model(trans)
-        metrics_dict.update(m_dict)
+        if train_fw:
+            m_dict, fw_loss = self._train_fw_model(trans)
+            metrics_dict.update(m_dict)
         # train policy
-        #metrics_dict.update(self._train_policy(trans))
+        if train_policy:
+            metrics_dict.update(self._train_policy(trans))
         #print(f"policy loss is {metrics_dict['policy_loss']}")
 
         return metrics_dict

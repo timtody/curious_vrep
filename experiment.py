@@ -23,7 +23,7 @@ def save_debug_img(pre_train, post_train, global_step):
 
 @gin.configurable
 def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
-            video_len, logdir=None):
+            video_len, train_iv, train_fw, train_policy, logdir=None):
     logger = Logger(logdir)
     agent = DQNAgent()
     env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
