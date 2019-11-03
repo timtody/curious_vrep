@@ -16,7 +16,6 @@ run_exp.train_iv = True
 run_exp.train_fw = True
 run_exp.train_policy = True
 
-
 # DQNAgent
 DQNAgent.vel_min = %VEL_MIN
 DQNAgent.vel_max = %VEL_MIN
