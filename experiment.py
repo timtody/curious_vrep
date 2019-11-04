@@ -8,19 +8,6 @@ from loggers import Logger
 from transition import Transition
 
 
-def minmax(pre, post):
-
-    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
-
-def save_debug_img(pre_train, post_train, global_step):
-    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
-    print(f"posttrain: max -> {np.max(post_train)} min -> {np.min(post_train)}")
-    plot, axes = plt.subplots(ncols=2)
-    axes[0].imshow(pre_train.numpy().squeeze().reshape((28, 28)))
-    axes[1].imshow(post_train.numpy().squeeze().reshape((28, 28)))
-    path = f"/home/julius/results/img/check_iv_step_{global_step}"
-    plt.savefig(path)
-    plt.close()
 
 
 @gin.configurable
@@ -46,7 +33,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         while not done:
             action = agent.get_action(state)
             n_state, reward, done, inf = env.step(action)
-
             transition = Transition()
             transition.set_state_new(n_state)
             transition.set_state_old(state)
@@ -57,14 +43,10 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             state = n_state
             if global_step % train_after == (train_after - 1):
                 print("Training agents")
-                pre_train = jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
                 metrics_dict = agent.train(train_iv, train_fw, train_policy)
                 logger.log_network_weights(jt_agent.embed, global_step)
-                post_train= jt_agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
-                #save_debug_img(pre_train, post_train, global_step)
                 logger.log_metrics(metrics_dict, global_step)
                 agent.decrease_eps(n_training_steps)
-                print(f"agent eps: {agent.joint_agents[0].eps}")
 
             if global_step % video_after == 0:
                 print("logging video")
@@ -76,3 +58,21 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 env.show_distractor()
 
             global_step += 1
+
+def get_embedding_img(agent, state):
+    img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
+
+    return img
+
+def minmax(pre, post):
+    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
+
+def save_debug_img(pre_train, post_train, global_step):
+    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
+    print(f"posttrain: max -> {np.max(post_train)} min -> {np.min(post_train)}")
+    plot, axes = plt.subplots(ncols=2)
+    axes[0].imshow(pre_train.numpy().squeeze().reshape((28, 28)))
+    axes[1].imshow(post_train.numpy().squeeze().reshape((28, 28)))
+    path = f"/home/julius/results/img/check_iv_step_{global_step}"
+    plt.savefig(path)
+    plt.close()
