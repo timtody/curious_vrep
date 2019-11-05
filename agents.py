@@ -48,10 +48,11 @@ class DQNAgent:
         for i, agent in enumerate(self.joint_agents):
             metrics_dict[i] = agent.train(train_iv=train_iv, train_fw=train_fw,
                                           train_policy=train_policy)
+        metrics_dict = self._invert_metrics_dict(metrics_dict)
 
         return metrics_dict
 
-    def invert_metrics_dict(self, dict):
+    def _invert_metrics_dict(self, dict):
         """Is used to change the dict from Agent->metric->value to
         Metric->agent->value"""
         inverted_dict = defaultdict(dict)
