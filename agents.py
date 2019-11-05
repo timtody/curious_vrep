@@ -51,7 +51,7 @@ class DQNAgent:
 
         return metrics_dict
 
-    def _invert_metrics_dict(self, dict):
+    def invert_metrics_dict(self, dict):
         """Is used to change the dict from Agent->metric->value to
         Metric->agent->value"""
         inverted_dict = defaultdict(dict)
