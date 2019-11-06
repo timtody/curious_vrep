@@ -170,7 +170,6 @@ class ForwardModel(Model):
     def __init__(self, model):
         super(ForwardModel, self).__init__()
         self.model = model
-        self.layers = model.layers
 
     def call(self, inputs):
         return self.model(inputs)
@@ -182,6 +181,7 @@ class AuxModel:
         self.model = ForwardModel(model)
         self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
         self.optimizer = tf.keras.optimizers.Adam()
+        self.layers = model.layers
 
     def _fit(self, inputs, labels):
         return np.random.randn(len(inputs))
