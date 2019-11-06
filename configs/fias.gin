@@ -8,6 +8,7 @@ run_exp.logdir = "/home/taylor/results/first_test"
 run_exp.train_iv = False
 run_exp.train_fw = True
 run_exp.train_policy = False
+run_exp.show_distractor_after = 30000
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
