@@ -5,6 +5,9 @@ run_exp.env_file = "/home/taylor/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 10000
 run_exp.logdir = "/home/taylor/results/first_test"
+run_exp.train_iv = False
+run_exp.train_fw = True
+run_exp.train_policy = False
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)

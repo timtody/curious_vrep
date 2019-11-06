@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from models import dqn_model, ICModule
 from replaybuffer import Buffer
+from collections import defaultdict
 
 
 
@@ -47,8 +48,19 @@ class DQNAgent:
         for i, agent in enumerate(self.joint_agents):
             metrics_dict[i] = agent.train(train_iv=train_iv, train_fw=train_fw,
                                           train_policy=train_policy)
+        metrics_dict = self._invert_metrics_dict(metrics_dict)
 
         return metrics_dict
+
+    def _invert_metrics_dict(self, dict):
+        """Is used to change the dict from Agent->metric->value to
+        Metric->agent->value"""
+        inverted_dict = defaultdict(dict)
+        for agent_key, m_dict in dict.items():
+            for metric, value in m_dict.items():
+                inverted_dict[metric].update({agent_key: value})
+
+        return inverted_dict
 
     def decrease_eps(self, n_training_steps):
         for agent in self.joint_agents:
