@@ -5,6 +5,10 @@ run_exp.env_file = "/home/julius/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
 run_exp.n_episodes = 10000
 run_exp.logdir = "/home/julius/results/curious"
+run_exp.train_iv = False
+run_exp.train_fw = True
+run_exp.train_policy = False
+run_exp.show_distractor_after = 30000
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
