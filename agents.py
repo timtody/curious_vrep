@@ -90,7 +90,7 @@ class JointAgent:
             self.eps -= (self.start_eps - self.target_eps) / (n_training_steps
                                                               * 0.9)
 
-    def get_action(self, obs):
+    def get_action_(self, obs):
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
@@ -99,6 +99,13 @@ class JointAgent:
         predictions = self.policy.predict_on_batch(obs)
 
         return np.argmax(predictions)
+
+    def get_action(self, obs):
+        """Samples from the policy distribution"""
+        obs = np.expand_dims(obs, axis=0)
+        probs = self.policy.predict_on_batch(obs)
+
+        return np.random.choice(self.possible_actions, p=probs)
 
     def train(self, train_iv=True, train_fw=True, train_policy=True):
         metrics_dict = {}
