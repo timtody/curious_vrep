@@ -14,7 +14,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             logdir=None):
     logger = Logger(logdir)
     agent = DQNAgent()
-    env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
+    env = Env(env_path=env_file, vis_name=vision_handle, headless=False)
     trainer = Trainer(env, agent)
 
     n_training_steps = n_episodes // train_after

@@ -9,7 +9,7 @@ Env.vel_min = %VEL_MIN
 Env.vel_max = %VEL_MAX
 
 # run_exp
-run_exp.train_after = 500
+run_exp.train_after = 50
 run_exp.video_after = 100000
 run_exp.video_len = 0
 run_exp.train_iv = True

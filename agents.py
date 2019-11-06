@@ -6,7 +6,6 @@ from replaybuffer import Buffer
 from collections import defaultdict
 
 
-
 @gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
@@ -97,6 +96,7 @@ class JointAgent:
             action = np.random.choice(self.possible_actions)
             return action
         predictions = self.policy.predict_on_batch(obs)
+        predictions = np.squeeze(predictions)
         action = np.random.choice(self.possible_actions, p=predictions)
 
         return action

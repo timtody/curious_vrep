@@ -8,7 +8,7 @@ run_exp.logdir = "/home/julius/results/curious"
 run_exp.train_iv = False
 run_exp.train_fw = True
 run_exp.train_policy = False
-run_exp.show_distractor_after = 30000
+run_exp.show_distractor_after = 5000
 
 # model parameters
 INPUT_SHAPE = (64, 64, 3)
@@ -28,9 +28,9 @@ DQNAgent.max_buffer_size = 500
 DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
-JointAgent.start_eps = 1.0
-JointAgent.target_eps = 1.0
-JointAgent.bsize = 500
+JointAgent.start_eps = 0.15
+JointAgent.target_eps = 0.15
+JointAgent.bsize = 50
 JointAgent.alph = 0.95
 JointAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
