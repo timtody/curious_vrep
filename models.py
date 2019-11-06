@@ -23,7 +23,7 @@ def dqn_model(n_discrete_actions, input_shape):
         Flatten(),
         Dense(128),
         Dense(128),
-        Dense(n_discrete_actions)
+        Dense(n_discrete_actions, activation="softmax")
     ])
     model.compile(optimizer="adam", loss="mse")
 
