@@ -170,6 +170,7 @@ class ForwardModel(Model):
     def __init__(self, model):
         super(ForwardModel, self).__init__()
         self.model = model
+        self.layers = model.layers
 
     def call(self, inputs):
         return self.model(inputs)
