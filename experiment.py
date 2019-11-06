@@ -45,6 +45,9 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 print("Training agents")
                 metrics_dict = agent.train(train_iv, train_fw, train_policy)
                 logger.log_network_weights(jt_agent.embed, global_step)
+                logger.log_network_weights(jt_agent.fw_model, global_step)
+                logger.log_network_weights(jt_agent.iv_model, global_step)
+                logger.log_network_weights(jt_agent.policy, global_step)
                 logger.log_metrics(metrics_dict, global_step)
                 agent.decrease_eps(n_training_steps)
 
