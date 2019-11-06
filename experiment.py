@@ -55,14 +55,12 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
 
             if global_step % show_distractor_after == (show_distractor_after - 1):
-                print("SHOWING DISTRACTOR")
                 env.show_distractor()
 
             global_step += 1
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
-
     return img
 
 def minmax(pre, post):
