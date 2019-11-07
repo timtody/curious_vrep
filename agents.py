@@ -121,7 +121,6 @@ class JointAgent:
         # train policy
         if train_policy:
             metrics_dict.update(self._train_policy(trans))
-        #print(f"policy loss is {metrics_dict['policy_loss']}")
 
         return metrics_dict
 
