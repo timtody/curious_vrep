@@ -23,4 +23,4 @@ run_exp.show_distractor_after = 300000
 # DQNAgent
 DQNAgent.vel_min = %VEL_MIN
 DQNAgent.vel_max = %VEL_MIN
-
+DQNAgent.enabled_joints = %ENABLED_JOINTS

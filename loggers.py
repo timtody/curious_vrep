@@ -23,6 +23,11 @@ class Logger:
     def log_metrics(self, metrics_dict, step):
         self.tb_logger.log_metrics(metrics_dict, step)
 
+    def log_network_params(self, agent, iv=False, fw=False, embed=False,
+                           policy=False):
+        pass
+
+
     def log_network_weights(self, network, step):
         self.tb_logger.log_network_weights(network, step)
 
