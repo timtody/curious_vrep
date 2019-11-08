@@ -9,7 +9,8 @@ from pyrep.objects.shape import Shape
 class Env:
     def __init__(self, n_discrete_actions, vel_min, vel_max, env_path=None,
                  vis_name=None, headless=True, debug_cam0=None,
-                 debug_cam1=None):
+                 debug_cam1=None, enables_joints=None):
+        self.enables_joints = enables_joints
         self._launch(env_path, headless)
         self._setup_robot()
         self._setup_vision(vis_name)
@@ -51,8 +52,9 @@ class Env:
         self.vis_debug1 = VisionSensor(name1)
 
     def step(self, action):
-        action = self._convert_action(action)
-        action = [0, 0, 0, action[0], 0, 0, 0]
+        converted_action = self._convert_action(action)
+        action = np.zeros(7)
+        action[self.enables_joints] = converted_action
         self.robot.set_joint_target_velocities(action)
         self.pr.step()
         reward = self._calculate_reward()

@@ -24,8 +24,6 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     logger.log_network_weights(jt_agent.embed, 0)
     for step in range(n_episodes):
         print(f"episode {step}")
-
-
         state = env.reset()
         done = False
         while not done:

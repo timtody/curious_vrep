@@ -10,9 +10,12 @@ from collections import defaultdict
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
     def __init__(self, n_discrete_actions, obs_shape, max_buffer_size, vel_min,
-                 vel_max):
+                 vel_max, enabled_joints):
+        self.enabled_joints = enabled_joints
+        self.n_joints = len(enabled_joints)
+
         self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
-                             n_agents=1)
+                             n_agents=self.n_joints)
         self._setup_joint_agents(n_discrete_actions)
         # actions transformed for the env
         self.env_actions = np.linspace(vel_min, vel_max, n_discrete_actions)
@@ -39,7 +42,7 @@ class DQNAgent:
 
     def _setup_joint_agents(self, n_discrete_actions):
         self.joint_agents = []
-        for i in range(1):
+        for i in range(self.n_joints):
             self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
     def train(self, train_iv, train_fw, train_policy):
