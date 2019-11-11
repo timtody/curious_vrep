@@ -11,10 +11,10 @@ from transition import Transition
 @gin.configurable
 def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             video_len, train_iv, train_fw, train_policy, show_distractor_after,
-            logdir=None):
+            toggle_table_after, logdir=None):
     logger = Logger(logdir)
     agent = DQNAgent()
-    env = Env(env_path=env_file, vis_name=vision_handle, headless=True)
+    env = Env(env_path=env_file, vis_name=vision_handle, headless=False)
     trainer = Trainer(env, agent)
 
     n_training_steps = n_episodes // train_after
@@ -52,8 +52,8 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
                 vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
                 logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
 
-            if global_step % show_distractor_after == (show_distractor_after - 1):
-                env.show_distractor()
+            if global_step % toggle_table_after == (toggle_table_after - 1):
+                env.toggle_table()
 
             global_step += 1
 

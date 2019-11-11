@@ -18,10 +18,16 @@ class Env:
         self._setup_debug_cameras(debug_cam0, debug_cam1)
         self._setup_target()
         self._setup_distractor()
+        self._setup_table()
 
     def _setup_distractor(self):
         self.distractor = Shape('distractor')
         self.hide_distractor()
+
+    def _setup_table(self):
+        self.table = Shape("diningTable")
+        self.table_near = False
+        self.table_initial_pos = self.table.get_position()
 
     def _setup_target(self):
         self.target = Shape('target')
@@ -74,6 +80,21 @@ class Env:
 
     def hide_distractor(self):
         self.distractor.set_position([-1.5, 0., 1.])
+
+    def toggle_table(self):
+        if self.table_near:
+            self._move_table_far()
+        else:
+            self._move_table_near()
+
+    def _move_table_near(self):
+        print("moving table near")
+        pos = self.table_initial_pos
+        pos[0] -= 1
+        self.table.set_position(pos)
+
+    def _move_table_far(self):
+        self.table.set_position(self.table_initial_pos)
 
     def _calculate_reward(self):
         ax, ay, az = self.tip.get_position()

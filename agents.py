@@ -40,11 +40,6 @@ class DQNAgent:
     def transform_action(self, action):
         return self.env_actions[action]
 
-    def _setup_joint_agents(self, n_discrete_actions):
-        self.joint_agents = []
-        for i in range(self.n_joints):
-            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
-
     def train(self, train_iv, train_fw, train_policy):
         metrics_dict = {}
         for i, agent in enumerate(self.joint_agents):
@@ -53,6 +48,15 @@ class DQNAgent:
         metrics_dict = self._invert_metrics_dict(metrics_dict)
 
         return metrics_dict
+
+    def decrease_eps(self, n_training_steps):
+        for agent in self.joint_agents:
+            agent.decrease_eps(n_training_steps)
+
+    def _setup_joint_agents(self, n_discrete_actions):
+        self.joint_agents = []
+        for i in range(self.n_joints):
+            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
 
     def _invert_metrics_dict(self, input_dict):
         """Is used to change the dict from Agent->metric->value to
@@ -63,10 +67,6 @@ class DQNAgent:
                 inverted_dict[metric].update({agent_key: value})
 
         return inverted_dict
-
-    def decrease_eps(self, n_training_steps):
-        for agent in self.joint_agents:
-            agent.decrease_eps(n_training_steps)
 
 
 @gin.configurable
