@@ -2,6 +2,7 @@ import gin
 import numpy as np
 from pyrep import PyRep
 from pyrep.robots.arms.panda import Panda
+from pyrep.robots.arms.lbr_iiwa_14_r820 import LBRIwaa14R820
 from pyrep.objects.vision_sensor import VisionSensor
 from pyrep.objects.shape import Shape
 
@@ -58,19 +59,17 @@ class Env:
         self.vis_debug1 = VisionSensor(name1)
 
     def step(self, action):
+        action = 2
         converted_action = self._convert_action(action)
         action = np.zeros(7)
         action[self.enabled_joints] = converted_action
         self.robot.set_joint_target_velocities(action)
+        print(action)
         self.pr.step()
         reward = self._calculate_reward()
-
-        if reward >= -0.15:
-            done = True
-            reward = 1
-        else:
-            done = False
         rgb = self.vision.capture_rgb()
+        reward = 0
+        done = False
 
         # todo: change to include more meaningful info
         return rgb, reward, done, {}

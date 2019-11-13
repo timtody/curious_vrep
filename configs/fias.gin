@@ -28,8 +28,8 @@ DQNAgent.obs_shape = %INPUT_SHAPE
 DQNAgent.n_discrete_actions = %N_DISCRETE_ACTIONS
 
 # JointAgent
-JointAgent.start_eps = 1.0
-JointAgent.target_eps = 1.0
+JointAgent.start_eps = 0.15
+JointAgent.target_eps = 0.15
 JointAgent.bsize = 500
 JointAgent.alph = 0.95
 JointAgent.n_discrete_actions = %N_DISCRETE_ACTIONS

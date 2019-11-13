@@ -1,0 +1,52 @@
+!ArenaConfig
+arenas:
+  0: !Arena
+    t: 500
+    items:
+    - !Item
+      name: GoodGoal
+      positions:
+      - !Vector3 {x: 35, y: 0, z: 35}
+      sizes:
+      - !Vector3 {x: 6, y: 6, z: 6}
+    - !Item
+      name: Agent
+      positions:
+        - !Vector3 {x: 5, y: -1, z: 5}
+      rotations: [180]
+    - !Item
+      name: Wall
+      positions:
+      - !Vector3 {x: 30, y: -1, z: 10}
+      - !Vector3 {x: 30, y: -1, z: 30}
+      colors:
+      - !RGB {r: 90, g: 22, b: 90 }
+      - !RGB {r: 90, g: 22, b: 90 }
+      sizes:
+      - !Vector3 {x: 1, y: 3, z: 7}
+      - !Vector3 {x: 15, y: 3, z: 1}
+      rotations: [15, 30]
+    - !Item
+      name: CylinderTunnel
+      colors:
+      - !RGB {r: 40, g: 0, b: 40 }
+      - !RGB {r: 40, g: 0, b: 40 }
+      - !RGB {r: 40, g: 0, b: 40 }
+      positions:
+      - !Vector3 {x: 15, y: -1, z: 10}
+      - !Vector3 {x: 18, y: -1, z: 33}
+      - !Vector3 {x: 5, y: -1, z: 22}
+      sizes:
+      - !Vector3 {x: 5, y: 5, z: 5}
+      - !Vector3 {x: 9, y: 5, z: 5}
+      - !Vector3 {x: 5, y: 4, z: 8}
+      rotations: [90, 45, 180]
+    - !Item
+      name: Ramp
+      colors:
+      - !RGB {r: 80, g: 0, b: 80 }
+      positions:
+      - !Vector3 {x: 25, y: -1, z: 25}
+      sizes:
+      - !Vector3 {x: 7, y: 7, z: 7}
+      rotations: [215]
