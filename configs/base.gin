@@ -2,7 +2,7 @@
 VEL_MIN = -3
 VEL_MAX = 3
 # list of joint indices which are controllable
-ENABLED_JOINTS = [2, 3]
+ENABLED_JOINTS = [3]
 
 # env
 Env.debug_cam0 = "debug_vis1"
@@ -14,7 +14,7 @@ Env.enabled_joints = %ENABLED_JOINTS
 # run_exp
 run_exp.train_after = 50
 run_exp.video_after = 500
-run_exp.video_len = 120
+run_exp.video_len = 0
 run_exp.train_iv = True
 run_exp.train_fw = True
 run_exp.train_policy = True

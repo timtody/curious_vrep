@@ -115,6 +115,12 @@ class Env:
         debug1 = self.vis_debug1.capture_rgb()
 
         return debug0, debug1
+    
+    def get_joint_positions(self):
+        pos = np.array(self.robot.get_joint_positions())
+        pos = pos[self.enabled_joints]
+
+        return pos
 
 
 if __name__ == "__main__":

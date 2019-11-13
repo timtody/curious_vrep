@@ -23,39 +23,43 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     jt_agent = agent.joint_agents[0]
     logger.log_network_weights(jt_agent.embed, 0)
     for step in range(n_episodes):
+        joint_angles = np.empty(n_episodes)
+
         print(f"episode {step}")
         state = env.reset()
-        done = False
-        while not done:
-            action = agent.get_action(state)
-            n_state, reward, done, inf = env.step(action)
-            transition = Transition()
-            transition.set_state_new(n_state)
-            transition.set_state_old(state)
-            transition.set_reward(reward)
-            transition.set_action(action)
-            agent.store_experience(transition)
+        action = agent.get_action(state)
+        n_state, reward, done, inf = env.step(action)
+        transition = Transition()
+        transition.set_state_new(n_state)
+        transition.set_state_old(state)
+        transition.set_reward(reward)
+        transition.set_action(action)
+        agent.store_experience(transition)
 
-            state = n_state
-            if global_step % train_after == (train_after - 1):
-                print("Training agents")
-                metrics_dict = agent.train(train_iv, train_fw, train_policy)
-                logger.log_network_weights(jt_agent.embed, global_step)
-                logger.log_network_weights(jt_agent.fw_model, global_step)
-                logger.log_network_weights(jt_agent.iv_model, global_step)
-                logger.log_network_weights(jt_agent.policy, global_step)
-                logger.log_metrics(metrics_dict, global_step)
-                agent.decrease_eps(n_training_steps)
+        state = n_state
+        if global_step % train_after == (train_after - 1):
+            print("Training agents")
+            metrics_dict = agent.train(train_iv, train_fw, train_policy)
+            logger.log_network_weights(jt_agent.embed, global_step)
+            logger.log_network_weights(jt_agent.fw_model, global_step)
+            logger.log_network_weights(jt_agent.iv_model, global_step)
+            logger.log_network_weights(jt_agent.policy, global_step)
+            logger.log_metrics(metrics_dict, global_step)
+            agent.decrease_eps(n_training_steps)
 
-            if global_step % video_after == 0:
-                print("logging video")
-                vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
-                logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
+        if global_step % video_after == 0:
+            print("logging video")
+            vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
+            logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
 
-            if global_step % toggle_table_after == (toggle_table_after - 1):
-                env.toggle_table()
+        if global_step % toggle_table_after == (toggle_table_after - 1):
+            env.toggle_table()
 
-            global_step += 1
+        global_step += 1
+        joint_angles[step] = env.get_joint_positions()
+
+    plt.hist(joint_angles)
+    plt.show()
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
