@@ -3,7 +3,7 @@ include 'configs/base.gin'
 # run_exp
 run_exp.env_file = "/home/julius/projects/curious_vrep/envs/test.ttt"
 run_exp.vision_handle = "Vision_sensor"
-run_exp.n_episodes = 50
+run_exp.n_episodes = 40
 run_exp.logdir = "/home/julius/results/curious"
 run_exp.train_iv = True
 run_exp.train_fw = True

@@ -59,7 +59,7 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         joint_angles[step] = env.get_joint_positions()
 
     plt.hist(joint_angles)
-    plt.show()
+    plt.savefig("/home/julius/projects/curious_vrep/local/dist.png")
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
