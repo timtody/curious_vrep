@@ -1,6 +1,6 @@
 # const
-VEL_MIN = -1
-VEL_MAX = 1
+VEL_MIN = -0.3
+VEL_MAX = 0.3
 # list of joint indices which are controllable
 ENABLED_JOINTS = [3]
 

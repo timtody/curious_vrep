@@ -22,11 +22,11 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     global_step = 0
     jt_agent = agent.joint_agents[0]
     logger.log_network_weights(jt_agent.embed, 0)
+    state = env.reset()
     for step in range(n_episodes):
         joint_angles = np.empty(n_episodes)
 
-        print(f"episode {step}")
-        state = env.reset()
+        #print(f"episode {step}")
         action = agent.get_action(state)
         n_state, reward, done, inf = env.step(action)
         transition = Transition()
@@ -56,8 +56,10 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             env.toggle_table()
 
         global_step += 1
-        #print(env.get_joint_positions())
-        #joint_angles[step] = env.get_joint_positions()
+        # max value [-0.0696348]
+        # min value [-3.07196569]
+        print(env.get_joint_positions())
+        joint_angles[step] = env.get_joint_positions()
 
     print(joint_angles)
     plt.hist(joint_angles)

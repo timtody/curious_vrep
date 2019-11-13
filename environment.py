@@ -59,12 +59,11 @@ class Env:
         self.vis_debug1 = VisionSensor(name1)
 
     def step(self, action):
-        action = 2
+        action = 0
         converted_action = self._convert_action(action)
         action = np.zeros(7)
         action[self.enabled_joints] = converted_action
         self.robot.set_joint_target_velocities(action)
-        print(action)
         self.pr.step()
         reward = self._calculate_reward()
         rgb = self.vision.capture_rgb()
