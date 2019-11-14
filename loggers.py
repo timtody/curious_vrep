@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 class Logger:
     def __init__(self, cfg):
-        self.logdir = cfg.log.logdir
+        self.logdir = cfg.log.dir
         self._make_dir(self.logdir)
         self.vid_logger = VideoLogger(self.logdir)
         self.metrics_logger = MetricsLogger(self.logdir)

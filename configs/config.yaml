@@ -3,7 +3,7 @@ const:
     inf: 99999999999
 
 log:
-    logdir: logs
+    dir: logs
 
 model:
     input_shape: [64, 64, 3]
@@ -37,3 +37,7 @@ exp:
     video_after: ${const.inf}
     toggle_table_after: ${const.inf}
     n_episodes: 5000
+
+hydra:
+  run:
+    dir: ./outputs/${log.dir}

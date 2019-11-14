@@ -1,9 +1,5 @@
 import os
-<<<<<<< HEAD
-import gin
-=======
 import hydra
->>>>>>> hydra
 import numpy as np
 from matplotlib import pyplot as plt
 from trainer import Trainer
@@ -20,34 +16,17 @@ def run_exp(cfg=None):
     env = Env(cfg)
     trainer = Trainer(env, agent, cfg)
 
-    logdir = cfg.log.logdir
+    logdir = cfg.log.dir
     cfg = cfg.exp
     n_training_steps = cfg.n_episodes // cfg.train_after
     global_step = 0
     state = env.reset()
-<<<<<<< HEAD
-    joint_angles = np.empty(n_episodes)
-    for step in range(n_episodes):
-        #print(f"episode {step}")
-        action = agent.get_action(state)
-        n_state, reward, done, inf = env.step(action)
-        transition = Transition()
-        transition.set_state_new(n_state)
-        transition.set_state_old(state)
-        transition.set_reward(reward)
-        transition.set_action(action)
-        agent.store_experience(transition)
-
-        state = n_state
-        if global_step % train_after == (train_after - 1):
-=======
     joint_angles = np.empty(cfg.n_episodes)
     for step in range(cfg.n_episodes):
         print(f"step {step}")
         state = trainer.single_step(state)
         
         if global_step % cfg.train_after == (cfg.train_after - 1):
->>>>>>> hydra
             print("Training agents")
             metrics_dict = agent.train(cfg.train_iv, 
                                        cfg.train_fw, cfg.train_policy)
@@ -63,28 +42,12 @@ def run_exp(cfg=None):
             env.toggle_table()
 
         global_step += 1
-<<<<<<< HEAD
-        # max value [-0.0696348]
-        # min value [-3.07196569]
-        pos = env.get_joint_positions()
-=======
         pos = env.get_joint_positions()[0]
->>>>>>> hydra
         joint_angles[step] = pos
 
     joint_angles = np.degrees(-joint_angles)
     plt.hist(joint_angles)
     plt.savefig(os.path.join(logdir, "plots", "explored_angles.png"))
-<<<<<<< HEAD
-
-def get_embedding_img(agent, state):
-    img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
-    return img
-
-def minmax(pre, post):
-    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
-=======
->>>>>>> hydra
 
 if __name__ == "__main__":
     run_exp()
