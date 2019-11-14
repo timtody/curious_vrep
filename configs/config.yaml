@@ -19,7 +19,7 @@ agent:
 joint:
     start_eps: 0.15
     target_eps: 0.15
-    bsize: 5000
+    bsize: 500
     alph: 0.95
 
 env:

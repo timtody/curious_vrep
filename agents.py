@@ -128,6 +128,7 @@ class JointAgent:
             metrics_dict.update(m_dict)
         # train policy
         if train_policy:
+            self.buffer.adjust_rewards(fw_loss)
             metrics_dict.update(self._train_policy(trans))
 
         return metrics_dict
