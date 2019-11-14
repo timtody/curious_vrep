@@ -2,11 +2,12 @@ import numpy as np
 
 
 class Trainer:
-    def __init__(self, env, agent):
+    def __init__(self, env, agent, cfg):
         self.env = env
         self.agent = agent
         self.state = env.reset()
         self.next_state = self.state
+        self.video_len = cfg.video_len
 
     def record_frames(self, n_frames, debug_cams=True):
         if debug_cams:

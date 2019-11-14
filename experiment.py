@@ -1,6 +1,7 @@
+import os
+import hydra
 import numpy as np
 from matplotlib import pyplot as plt
-import gin
 from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
@@ -8,14 +9,12 @@ from loggers import Logger
 from transition import Transition
 
 
-@gin.configurable
-def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
-            video_len, train_iv, train_fw, train_policy, show_distractor_after,
-            toggle_table_after, logdir=None):
-    logger = Logger(logdir)
-    agent = DQNAgent()
-    env = Env(env_path=env_file, vis_name=vision_handle, headless=False)
-    trainer = Trainer(env, agent)
+@hydra.main
+def run_exp(cfg):
+    logger = Logger(cfg.exp.logger)
+    agent = DQNAgent(cfg.cfg.exp)
+    env = Env(cfg.env)
+    trainer = Trainer(env, agent, cfg.trainer)
 
     n_training_steps = n_episodes // train_after
 
@@ -23,9 +22,8 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     jt_agent = agent.joint_agents[0]
     logger.log_network_weights(jt_agent.embed, 0)
     state = env.reset()
-    for step in range(n_episodes):
-        joint_angles = np.empty(n_episodes)
-
+    joint_angles = np.empty(cfg.exp.n_episodes)
+    for step in range(cfg.exp.n_episodes):
         #print(f"episode {step}")
         action = agent.get_action(state)
         n_state, reward, done, inf = env.step(action)
@@ -47,9 +45,9 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
             logger.log_metrics(metrics_dict, global_step)
             agent.decrease_eps(n_training_steps)
 
-        if global_step % video_after == 0:
+        if global_step % cfg.exp.video_after == 0:
             print("logging video")
-            vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
+            vis, debug0, debug1 = trainer.record_frames(debug_cams=True)
             logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
 
         if global_step % toggle_table_after == (toggle_table_after - 1):
@@ -58,19 +56,16 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         global_step += 1
         # max value [-0.0696348]
         # min value [-3.07196569]
-        print(env.get_joint_positions())
-        joint_angles[step] = env.get_joint_positions()
+        pos = env.get_joint_positions()[0]
+        joint_angles[step] = pos
 
-    print(joint_angles)
+    joint_angles = np.degrees(-joint_angles)
     plt.hist(joint_angles)
-    plt.savefig("local/dist.png")
+    plt.savefig(os.path.join(logdir, "plots", "explored_angles.png"))
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
     return img
-
-def minmax(pre, post):
-    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
 
 def save_debug_img(pre_train, post_train, global_step):
     print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")

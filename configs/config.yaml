@@ -1,0 +1,23 @@
+const:
+    home: /home/${env:USER}
+
+exp:
+    train_iv: True
+    train_fw: True
+    train_policy: True
+    train_after: 50
+    video_after: 1000000
+
+env:
+    env_file: ${const.home}/projects/curious_vrep/envs/test.ttt
+
+logger:
+    logdir: logs
+
+policy_model:
+    input_shape: (64, 64, 3)
+    n_discrete_actions: 3
+
+dqn_agent:
+    obs_shape: ${policy_model.input_shape}
+    n_discrete_actions: ${policy_model.n_discrete_actions}

@@ -1,0 +1,10 @@
+agent:
+  n_joints: 20
+  some_param: true
+exp:
+  env_path: some/path
+  n_episodes: 500
+trainer:
+  param: 1
+  param2: true
+  param3: 3

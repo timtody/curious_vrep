@@ -9,16 +9,15 @@ from collections import defaultdict
 @gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
-    def __init__(self, n_discrete_actions, obs_shape, max_buffer_size, vel_min,
-                 vel_max, enabled_joints):
-        self.enabled_joints = enabled_joints
-        self.n_joints = len(enabled_joints)
+    def __init__(self, cfg):
+        self.enabled_joints = cfg.enabled_joints
+        self.n_joints = len(cfg.enabled_joints)
 
-        self.buffer = Buffer(obs_shape, max_buffer_size=max_buffer_size,
+        self.buffer = Buffer(cfg.obs_shape, max_buffer_size=cfg.max_buffer_size,
                              n_agents=self.n_joints)
         self._setup_joint_agents(n_discrete_actions)
         # actions transformed for the env
-        self.env_actions = np.linspace(vel_min, vel_max, n_discrete_actions)
+        self.env_actions = np.linspace(cfg.vel_min, cfg.vel_max, cfg.n_discrete_actions)
 
     def store_experience(self, transition):
         state = transition.state_old

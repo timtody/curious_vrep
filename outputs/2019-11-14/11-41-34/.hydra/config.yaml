@@ -1,0 +1,3 @@
+exp:
+  env_path: some/path
+  n_episodes: 50

@@ -1,6 +1,6 @@
 # const
-VEL_MIN = -0.3
-VEL_MAX = 0.3
+VEL_MIN = -0.01
+VEL_MAX = 0.01
 # list of joint indices which are controllable
 ENABLED_JOINTS = [3]
 
@@ -13,13 +13,13 @@ Env.enabled_joints = %ENABLED_JOINTS
 
 # run_exp
 run_exp.train_after = 50
-run_exp.video_after = 500
+run_exp.video_after = 10000
 run_exp.video_len = 0
 run_exp.train_iv = True
 run_exp.train_fw = True
 run_exp.train_policy = True
 run_exp.show_distractor_after = 300000
-run_exp.toggle_table_after = 5000
+run_exp.toggle_table_after = 300000
 
 # DQNAgent
 DQNAgent.vel_min = %VEL_MIN

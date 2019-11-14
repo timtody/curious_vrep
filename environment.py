@@ -8,15 +8,13 @@ from pyrep.objects.shape import Shape
 
 @gin.configurable
 class Env:
-    def __init__(self, n_discrete_actions, vel_min, vel_max, env_path=None,
-                 vis_name=None, headless=True, debug_cam0=None,
-                 debug_cam1=None, enabled_joints=None):
-        self.enabled_joints = enabled_joints
-        self._launch(env_path, headless)
+    def __init__(self, cfg):
+        self.enabled_joints = cfg.enabled_joints
+        self._launch(cfg.env_path, cfg.headless)
         self._setup_robot()
-        self._setup_vision(vis_name)
-        self._setup_actions(n_discrete_actions, vel_min, vel_max)
-        self._setup_debug_cameras(debug_cam0, debug_cam1)
+        self._setup_vision("Vision_sensor")
+        self._setup_actions(cfg.n_discrete_actions, cfg.vel_min, cfg.vel_max)
+        self._setup_debug_cameras("debug_vis0", "debug_vis1")
         self._setup_target()
         self._setup_distractor()
         self._setup_table()
@@ -59,7 +57,6 @@ class Env:
         self.vis_debug1 = VisionSensor(name1)
 
     def step(self, action):
-        action = 0
         converted_action = self._convert_action(action)
         action = np.zeros(7)
         action[self.enabled_joints] = converted_action
