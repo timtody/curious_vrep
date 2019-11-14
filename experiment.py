@@ -1,6 +1,7 @@
+import os
+import gin
 import numpy as np
 from matplotlib import pyplot as plt
-import gin
 from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
@@ -23,9 +24,8 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
     jt_agent = agent.joint_agents[0]
     logger.log_network_weights(jt_agent.embed, 0)
     state = env.reset()
+    joint_angles = np.empty(n_episodes)
     for step in range(n_episodes):
-        joint_angles = np.empty(n_episodes)
-
         #print(f"episode {step}")
         action = agent.get_action(state)
         n_state, reward, done, inf = env.step(action)
@@ -58,12 +58,12 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
         global_step += 1
         # max value [-0.0696348]
         # min value [-3.07196569]
-        print(env.get_joint_positions())
-        joint_angles[step] = env.get_joint_positions()
+        pos = env.get_joint_positions()
+        joint_angles[step] = pos
 
-    print(joint_angles)
+    joint_angles = np.degrees(-joint_angles)
     plt.hist(joint_angles)
-    plt.savefig("local/dist.png")
+    plt.savefig(os.path.join(logdir, "plots", "explored_angles.png"))
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
