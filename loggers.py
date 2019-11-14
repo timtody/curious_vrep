@@ -9,12 +9,12 @@ from matplotlib import pyplot as plt
 
 
 class Logger:
-    def __init__(self, logdir):
-        self.logdir = logdir
-        self._make_dir(logdir)
-        self.vid_logger = VideoLogger(logdir)
-        self.metrics_logger = MetricsLogger(logdir)
-        self.tb_logger = TBLogger(logdir)
+    def __init__(self, cfg):
+        self.logdir = cfg.log.logdir
+        self._make_dir(self.logdir)
+        self.vid_logger = VideoLogger(self.logdir)
+        self.metrics_logger = MetricsLogger(self.logdir)
+        self.tb_logger = TBLogger(self.logdir)
 
     def _make_dir(self, logdir):
         if not os.path.exists(logdir):
@@ -26,7 +26,6 @@ class Logger:
     def log_network_params(self, agent, iv=False, fw=False, embed=False,
                            policy=False):
         pass
-
 
     def log_network_weights(self, network, step):
         self.tb_logger.log_network_weights(network, step)

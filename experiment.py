@@ -1,29 +1,31 @@
 import os
+<<<<<<< HEAD
 import gin
+=======
+import hydra
+>>>>>>> hydra
 import numpy as np
 from matplotlib import pyplot as plt
 from trainer import Trainer
 from agents import DQNAgent
 from environment import Env
 from loggers import Logger
-from transition import Transition
 
 
-@gin.configurable
-def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
-            video_len, train_iv, train_fw, train_policy, show_distractor_after,
-            toggle_table_after, logdir=None):
-    logger = Logger(logdir)
-    agent = DQNAgent()
-    env = Env(env_path=env_file, vis_name=vision_handle, headless=False)
-    trainer = Trainer(env, agent)
 
-    n_training_steps = n_episodes // train_after
+@hydra.main(config_path="configs/config.yaml")
+def run_exp(cfg=None):
+    logger = Logger(cfg)
+    agent = DQNAgent(cfg)
+    env = Env(cfg)
+    trainer = Trainer(env, agent, cfg)
 
+    logdir = cfg.log.logdir
+    cfg = cfg.exp
+    n_training_steps = cfg.n_episodes // cfg.train_after
     global_step = 0
-    jt_agent = agent.joint_agents[0]
-    logger.log_network_weights(jt_agent.embed, 0)
     state = env.reset()
+<<<<<<< HEAD
     joint_angles = np.empty(n_episodes)
     for step in range(n_episodes):
         #print(f"episode {step}")
@@ -38,32 +40,42 @@ def run_exp(env_file, vision_handle, n_episodes, train_after, video_after,
 
         state = n_state
         if global_step % train_after == (train_after - 1):
+=======
+    joint_angles = np.empty(cfg.n_episodes)
+    for step in range(cfg.n_episodes):
+        print(f"step {step}")
+        state = trainer.single_step(state)
+        
+        if global_step % cfg.train_after == (cfg.train_after - 1):
+>>>>>>> hydra
             print("Training agents")
-            metrics_dict = agent.train(train_iv, train_fw, train_policy)
-            logger.log_network_weights(jt_agent.embed, global_step)
-            logger.log_network_weights(jt_agent.fw_model, global_step)
-            logger.log_network_weights(jt_agent.iv_model, global_step)
-            logger.log_network_weights(jt_agent.policy, global_step)
+            metrics_dict = agent.train(cfg.train_iv, 
+                                       cfg.train_fw, cfg.train_policy)
             logger.log_metrics(metrics_dict, global_step)
             agent.decrease_eps(n_training_steps)
 
-        if global_step % video_after == 0:
+        if global_step % cfg.video_after == 0:
             print("logging video")
-            vis, debug0, debug1 = trainer.record_frames(video_len, debug_cams=True)
+            vis, debug0, debug1 = trainer.record_frames(debug_cams=True)
             logger.log_vid_debug_cams(vis, debug0, debug1, global_step)
 
-        if global_step % toggle_table_after == (toggle_table_after - 1):
+        if global_step % cfg.toggle_table_after == (cfg.toggle_table_after - 1):
             env.toggle_table()
 
         global_step += 1
+<<<<<<< HEAD
         # max value [-0.0696348]
         # min value [-3.07196569]
         pos = env.get_joint_positions()
+=======
+        pos = env.get_joint_positions()[0]
+>>>>>>> hydra
         joint_angles[step] = pos
 
     joint_angles = np.degrees(-joint_angles)
     plt.hist(joint_angles)
     plt.savefig(os.path.join(logdir, "plots", "explored_angles.png"))
+<<<<<<< HEAD
 
 def get_embedding_img(agent, state):
     img = agent.embed.predict_on_batch(np.expand_dims(state, axis=0))
@@ -71,13 +83,8 @@ def get_embedding_img(agent, state):
 
 def minmax(pre, post):
     print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
+=======
+>>>>>>> hydra
 
-def save_debug_img(pre_train, post_train, global_step):
-    print(f"pretrain: max -> {np.max(pre_train)} min -> {np.min(pre_train)}")
-    print(f"posttrain: max -> {np.max(post_train)} min -> {np.min(post_train)}")
-    plot, axes = plt.subplots(ncols=2)
-    axes[0].imshow(pre_train.numpy().squeeze().reshape((28, 28)))
-    axes[1].imshow(post_train.numpy().squeeze().reshape((28, 28)))
-    path = f"/home/julius/results/img/check_iv_step_{global_step}"
-    plt.savefig(path)
-    plt.close()
+if __name__ == "__main__":
+    run_exp()

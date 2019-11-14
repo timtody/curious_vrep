@@ -1,32 +1,33 @@
 import numpy as np
-
+from transition import Transition
 
 class Trainer:
-    def __init__(self, env, agent):
+    def __init__(self, env, agent, cfg):
         self.env = env
         self.agent = agent
         self.state = env.reset()
         self.next_state = self.state
+        self.video_len = cfg.trainer.video_len
 
-    def record_frames(self, n_frames, debug_cams=True):
+    def record_frames(self, debug_cams=True):
         if debug_cams:
-            return self._record_frames_with_debug_cams(n_frames)
-        return self._record_frames(n_frames)
+            return self._record_frames_with_debug_cams()
+        return self._record_frames()
 
-    def _record_frames(self, frames):
-        out = np.empty((frames, 64, 64, 3))
-        for i in range(frames):
+    def _record_frames(self):
+        out = np.empty((self.video_len, 64, 64, 3))
+        for i in range(self.video_len):
             out[i] = self.state
             self.step(store=False)
 
         return out
 
-    def _record_frames_with_debug_cams(self, n_frames):
-        vision = np.empty((n_frames, 64, 64, 3))
-        debug0 = np.empty((n_frames, 64, 64, 3))
-        debug1 = np.empty((n_frames, 64, 64, 3))
+    def _record_frames_with_debug_cams(self):
+        vision = np.empty((self.video_len, 64, 64, 3))
+        debug0 = np.empty((self.video_len, 64, 64, 3))
+        debug1 = np.empty((self.video_len, 64, 64, 3))
 
-        for i in range(n_frames):
+        for i in range(self.video_len):
             vision[i] = self.state
             debug_im0, debug_im1 = self.env.get_debug_images()
             debug0[i] = debug_im0
@@ -49,5 +50,14 @@ class Trainer:
         if done:
             self.env.reset()
 
-    def set_parameters(self):
-        pass
+    def single_step(self, old_state):
+        action = self.agent.get_action(old_state)
+        new_state, reward, _done, _inf = self.env.step(action)
+        transition = Transition()
+        transition.set_state_new(new_state)
+        transition.set_state_old(old_state)
+        transition.set_reward(reward)
+        transition.set_action(action)
+        self.agent.store_experience(transition)
+        
+        return new_state

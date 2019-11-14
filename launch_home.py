@@ -1,7 +1,11 @@
-import gin
-import sys
+import hydra
 from experiment import run_exp
 
-logdir = sys.argv[1]
-gin.parse_config_file("configs/home.gin")
-run_exp(logdir=logdir)
+@hydra.main(config_path="configs/config.yaml")
+def main(cfg):
+    print(cfg.pretty())
+    exit(1)
+    run_exp(cfg)
+
+if __name__ == "__main__":
+    main()
