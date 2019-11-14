@@ -1,3 +1,4 @@
+outputs/
 local/
 .mypy_cache/
 *.json

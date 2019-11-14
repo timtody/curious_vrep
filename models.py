@@ -11,10 +11,9 @@ tf.get_logger().setLevel('INFO')
 #tf.compat.v1.disable_eager_execution()
 
 
-@gin.configurable
-def dqn_model(n_discrete_actions, input_shape):
+def dqn_model(cfg):
     model = Sequential([
-        Conv2D(8, (3, 3), activation="relu", input_shape=input_shape),
+        Conv2D(8, (3, 3), activation="relu", input_shape=cfg.model.input_shape),
         Conv2D(16, (3, 3), activation="relu"),
         MaxPool2D((2, 2)),
         Conv2D(16, (3, 3), activation="relu"),
@@ -23,20 +22,19 @@ def dqn_model(n_discrete_actions, input_shape):
         Flatten(),
         Dense(128),
         Dense(128),
-        Dense(n_discrete_actions, activation="softmax")
+        Dense(cfg.model.n_discrete_actions, activation="softmax")
     ])
     model.compile(optimizer="adam", loss="mse")
 
     return model
 
 
-@gin.configurable
 class ICModule:
-    def __init__(self, input_shape, n_discrete_actions):
-        self.state_t0 = Input(shape=input_shape)
-        self.state_t1 = Input(shape=input_shape)
-        self.state_forward = Input(shape=input_shape)
-        self.state_embedding = Input(shape=input_shape)
+    def __init__(self, cfg):
+        self.state_t0 = Input(shape=cfg.model.input_shape)
+        self.state_t1 = Input(shape=cfg.model.input_shape)
+        self.state_forward = Input(shape=cfg.model.input_shape)
+        self.state_embedding = Input(shape=cfg.model.input_shape)
         self.action = Input(shape=(1,))
         self.conv1 = Conv2D(32, (3, 3), strides=(2, 2), activation="elu")
         self.conv2 = Conv2D(32, (3, 3), strides=(2, 2), activation="elu")
@@ -48,7 +46,7 @@ class ICModule:
         self.bnorm4 = BatchNormalization()
         self.flatten = Flatten()
         self.dense1 = Dense(128)
-        self.dense2 = Dense(n_discrete_actions, activation="softmax")
+        self.dense2 = Dense(cfg.agent.n_discrete_actions, activation="softmax")
         self.dense_fw_1 = Dense(256)
         self.dense_fw_2 = Dense(121)
 

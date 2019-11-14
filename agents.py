@@ -1,4 +1,3 @@
-import gin
 import tensorflow as tf
 import numpy as np
 from models import dqn_model, ICModule
@@ -6,25 +5,24 @@ from replaybuffer import Buffer
 from collections import defaultdict
 
 
-@gin.configurable
 class DQNAgent:
     """DQNAgent with intrinsic curiosity"""
     def __init__(self, cfg):
-        self.enabled_joints = cfg.enabled_joints
-        self.n_joints = len(cfg.enabled_joints)
-
-        self.buffer = Buffer(cfg.obs_shape, max_buffer_size=cfg.max_buffer_size,
+        self.enabled_joints = cfg.agent.enabled_joints
+        self.n_joints = len(self.enabled_joints)
+        self.buffer = Buffer(cfg.model.input_shape, 
+                             max_buffer_size=cfg.agent.max_buffer_size,
                              n_agents=self.n_joints)
-        self._setup_joint_agents(n_discrete_actions)
+        self._setup_joint_agents(cfg)
         # actions transformed for the env
-        self.env_actions = np.linspace(cfg.vel_min, cfg.vel_max, cfg.n_discrete_actions)
+        self.env_actions = np.linspace(cfg.agent.vel_min, cfg.agent.vel_max,
+                                       cfg.agent.n_discrete_actions)
 
     def store_experience(self, transition):
         state = transition.state_old
         next_state = transition.state_new
         action = transition.action
         reward = transition.reward
-        
         # do state processing such as convert to greyscale here
         # todo: change buffer.append() signature to append(transition) 
         self.buffer.append(state, next_state, action, reward)
@@ -52,10 +50,11 @@ class DQNAgent:
         for agent in self.joint_agents:
             agent.decrease_eps(n_training_steps)
 
-    def _setup_joint_agents(self, n_discrete_actions):
+    def _setup_joint_agents(self, cfg):
+        n_discrete_actions = cfg.agent.n_discrete_actions
         self.joint_agents = []
         for i in range(self.n_joints):
-            self.joint_agents.append(JointAgent(self.buffer, n_discrete_actions, index=i))
+            self.joint_agents.append(JointAgent(cfg, self.buffer, n_discrete_actions, index=i))
 
     def _invert_metrics_dict(self, input_dict):
         """Is used to change the dict from Agent->metric->value to
@@ -68,18 +67,16 @@ class DQNAgent:
         return inverted_dict
 
 
-@gin.configurable
 class JointAgent:
-    def __init__(self, buffer, n_discrete_actions, start_eps, target_eps,
-                 bsize, alph, index=None):
-        self.policy = dqn_model()
-        self.fw_model, self.iv_model, self.embed = ICModule().compile()
+    def __init__(self, cfg, buffer, n_discrete_actions, index=None):
+        self.policy = dqn_model(cfg)
+        self.fw_model, self.iv_model, self.embed = ICModule(cfg).compile()
         self.buffer = buffer
-        self.eps = start_eps
-        self.start_eps = start_eps
-        self.target_eps = target_eps
-        self.bsize = bsize
-        self.alph = alph
+        self.eps = cfg.joint.start_eps
+        self.start_eps = cfg.joint.start_eps
+        self.target_eps = cfg.joint.target_eps
+        self.bsize = cfg.joint.bsize
+        self.alph = cfg.joint.alph
         self.index = index
         self.possible_actions = self._gen_actions(n_discrete_actions)
 

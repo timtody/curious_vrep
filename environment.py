@@ -1,4 +1,3 @@
-import gin
 import numpy as np
 from pyrep import PyRep
 from pyrep.robots.arms.panda import Panda
@@ -6,15 +5,15 @@ from pyrep.robots.arms.lbr_iiwa_14_r820 import LBRIwaa14R820
 from pyrep.objects.vision_sensor import VisionSensor
 from pyrep.objects.shape import Shape
 
-@gin.configurable
 class Env:
     def __init__(self, cfg):
-        self.enabled_joints = cfg.enabled_joints
-        self._launch(cfg.env_path, cfg.headless)
+        self.enabled_joints = cfg.agent.enabled_joints
+        self._launch(cfg.env.env_path, cfg.env.headless)
         self._setup_robot()
         self._setup_vision("Vision_sensor")
-        self._setup_actions(cfg.n_discrete_actions, cfg.vel_min, cfg.vel_max)
-        self._setup_debug_cameras("debug_vis0", "debug_vis1")
+        self._setup_actions(cfg.agent.n_discrete_actions,
+                            cfg.agent.vel_min, cfg.agent.vel_max)
+        self._setup_debug_cameras("debug_vis1", "debug_vis2")
         self._setup_target()
         self._setup_distractor()
         self._setup_table()
