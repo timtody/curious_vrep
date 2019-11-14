@@ -23,10 +23,10 @@ def run_exp(cfg=None):
     state = env.reset()
     joint_angles = np.empty(cfg.n_episodes)
     for step in range(cfg.n_episodes):
-        print(f"step {step}")
         state = trainer.single_step(state)
         
         if global_step % cfg.train_after == (cfg.train_after - 1):
+            print(f"step: {step}")
             print("Training agents")
             metrics_dict = agent.train(cfg.train_iv, 
                                        cfg.train_fw, cfg.train_policy)

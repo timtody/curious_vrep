@@ -36,7 +36,7 @@ exp:
     train_after: 500
     video_after: ${const.inf}
     toggle_table_after: ${const.inf}
-    n_episodes: 5000
+    n_episodes: 10000
 
 hydra:
   run:
