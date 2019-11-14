@@ -13,13 +13,13 @@ agent:
     enabled_joints: [3]
     n_discrete_actions: 3
     max_buffer_size: 500
-    vel_min: -0.01
-    vel_max: 0.01
+    vel_min: -0.001
+    vel_max: 0.001
 
 joint:
     start_eps: 0.15
     target_eps: 0.15
-    bsize: 500
+    bsize: 5000
     alph: 0.95
 
 env:
@@ -33,7 +33,7 @@ exp:
     train_iv: True
     train_fw: True
     train_policy: True
-    train_after: 50
+    train_after: 500
     video_after: ${const.inf}
     toggle_table_after: ${const.inf}
     n_episodes: 5000

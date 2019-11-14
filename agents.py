@@ -85,10 +85,19 @@ class JointAgent:
 
     def decrease_eps(self, n_training_steps):
         if self.eps >= self.target_eps:
-            self.eps -= (self.start_eps - self.target_eps) / (n_training_steps
-                                                              * 0.9)
-
+            self.eps -= (self.start_eps-self.target_eps) / (n_training_steps*0.9)
+    
     def get_action(self, obs):
+        obs = np.expand_dims(obs, axis=0)
+        draw = np.random.uniform()
+        if draw <= self.eps:
+            action = np.random.choice(self.possible_actions)
+            return action
+        predictions = self.policy.predict_on_batch(obs)
+        
+        return np.argmax(predictions)
+
+    def get_action__(self, obs):
         obs = np.expand_dims(obs, axis=0)
         draw = np.random.uniform()
         if draw <= self.eps:
