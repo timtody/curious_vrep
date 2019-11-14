@@ -115,27 +115,3 @@ class Env:
         pos = pos[self.enabled_joints]
 
         return pos
-
-
-if __name__ == "__main__":
-    import numpy as np
-    import matplotlib
-    matplotlib.use("TkAgg")
-    from matplotlib import pyplot as plt
-
-    env = Env(3, -3, 3, env_path="/home/julius/projects/curious_vrep/envs/test.ttt",
-              vis_name="Vision_sensor", debug_cam0="debug_vis1",
-              debug_cam1="debug_vis2", headless=True)
-    for i in range(100000):
-        action = np.random.choice([0,1,2])
-        action = [0]
-        rgb, reward, done, info = env.step([action])
-        plt.imshow(rgb)
-        plt.show()
-    print(rgb.shape)
-    print("done")
-
-
-
-
-

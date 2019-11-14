@@ -1,6 +1,7 @@
 outputs/
 local/
 .mypy_cache/
+.vscode/
 *.json
 # vim specific files
 *.swp
