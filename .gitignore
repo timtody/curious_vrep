@@ -9,6 +9,7 @@ local/
 # pyc files and folders
 *.pyc
 __pycache__/
+.unity/
 
 # debug filestest.py
 test.py
