@@ -30,6 +30,10 @@ class Logger:
     def log_network_params(self, agent, iv=False, fw=False, embed=False,
                            policy=False):
         pass
+    
+    def log_all_network_weights(self, agent, step):
+        for nw in agent.networks:
+            self.log_network_weights(nw, step)
 
     def log_network_weights(self, network, step):
         self.tb_logger.log_network_weights(network, step)

@@ -15,7 +15,6 @@ def run_exp(cfg=None):
     env = Env(cfg)
     trainer = Trainer(env, agent, cfg)
 
-    logdir = cfg.log.dir
     cfg = cfg.exp
     n_training_steps = cfg.n_episodes // cfg.train_after
     global_step = 0
@@ -23,7 +22,6 @@ def run_exp(cfg=None):
     joint_angles = np.empty(cfg.n_episodes)
     for step in range(cfg.n_episodes):
         state = trainer.single_step(state)
-        
         # agent training
         if global_step % cfg.train_after == (cfg.train_after - 1):
             print(f"step: {step}")
@@ -32,6 +30,7 @@ def run_exp(cfg=None):
             metrics_dict = agent.train(cfg.train_iv, cfg.train_fw,
                                        cfg.train_policy if global_step >= 2000 else False)
             logger.log_metrics(metrics_dict, global_step)
+            logger.log_all_network_weights(agent.joint_agents[0], step)
             agent.decrease_eps(n_training_steps)
 
         # video logging

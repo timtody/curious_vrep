@@ -71,6 +71,7 @@ class JointAgent:
     def __init__(self, cfg, buffer, n_discrete_actions, index=None):
         self.policy = dqn_model(cfg)
         self.fw_model, self.iv_model, self.embed = ICModule(cfg).compile()
+        self.networks = [self.policy, self.fw_model, self.iv_model, self.embed]
         self.buffer = buffer
         self.eps = cfg.joint.start_eps
         self.start_eps = cfg.joint.start_eps
