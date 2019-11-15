@@ -48,7 +48,7 @@ def run_exp(cfg=None):
         joint_angles[step] = pos
 
     joint_angles = np.degrees(-joint_angles)
-    plt.hist(joint_angles, bins=50, range=(0, 170))
+    plt.hist(joint_angles, bins=20, range=(0, 170))
     plt.savefig(os.path.join("plots", "explored_angles.png"))
 
 if __name__ == "__main__":
