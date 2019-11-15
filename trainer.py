@@ -36,9 +36,6 @@ class Trainer:
 
         return vision, debug0, debug1
 
-    def _reduce_eps(self):
-        pass
-
     def step(self, store=True):
         action = self.agent.get_action(self.state)
         self.next_state, reward, done, info = self.env.step(action)

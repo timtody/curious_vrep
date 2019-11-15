@@ -10,8 +10,12 @@ from matplotlib import pyplot as plt
 
 class Logger:
     def __init__(self, cfg):
-        self.logdir = cfg.log.dir
-        self._make_dir(self.logdir)
+        # todo: this is a quick fix due to hydra specifics
+        # since hydra already creates a logdir, this does not need
+        # to be done here
+        #self._make_dir(self.logdir)
+        self.logdir = ""
+
         self.vid_logger = VideoLogger(self.logdir)
         self.metrics_logger = MetricsLogger(self.logdir)
         self.tb_logger = TBLogger(self.logdir)
@@ -205,7 +209,6 @@ class VideoLogger:
         frames = (frames * 255).astype(np.uint8)
 
         return frames
-
 
 
 if __name__ == "__main__":
