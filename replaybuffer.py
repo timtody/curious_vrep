@@ -1,4 +1,5 @@
 import numpy as np
+from transition import Transition
 
 class Buffer:
     def __init__(self, observation_shape, max_buffer_size=500, alpha=2,
@@ -98,16 +99,17 @@ class Buffer:
         map(shuf, [self.old_state, self.new_state, self.action, self.reward])
 
     def get_random_batch(self, batch_size):
+        transition = Transition()
         if not self.filled:
             indices = np.random.randint(self.write_idx, size=batch_size)
         else:
             indices = np.random.randint(self.max_buffer_size, size=batch_size)
-        old_state = self.old_state[indices]
-        new_state = self.new_state[indices]
-        action = self.action[indices]
-        reward = self.reward[indices]
+        transition.set_state_old(self.old_state[indices])
+        transition.set_state_new(self.new_state[indices])
+        transition.set_action(self.action[indices])
+        transition.set_reward(self.reward[indices])
 
-        return old_state, new_state, action, reward
+        return transition
 
     def get_weighted_batch(self, batch_size):
         """This function generates weights depending on the

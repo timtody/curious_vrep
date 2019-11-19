@@ -135,40 +135,36 @@ class JointAgent:
         return metrics_dict
 
     def _sample(self):
-        old_states, new_states, actions, rewards =\
-            self.buffer.get_random_batch(self.bsize)
-        transition = {"old": old_states, "new": new_states,
-                "actions": actions[:,self.index], "rewards": rewards}
-
+        transition = self.buffer.get_random_batch(self.bsize)
+        
         return transition
 
     def _train_policy(self, trans):
-        pred_rewards_this = self.policy.predict_on_batch(trans["old"])
-        pred_rewards_next = self.policy.predict_on_batch(trans["new"])
-        target_rewards = trans["rewards"] +\
-            self.alph * np.max(pred_rewards_next)
+        pred_rewards_this = self.policy.predict_on_batch(trans.state_old)
+        pred_rewards_next = self.policy.predict_on_batch(trans.state_new)
+        target_rewards = trans.rewards + self.alph * np.max(pred_rewards_next)
         network_targets = pred_rewards_this.numpy()
 
         # set the target rewards depending on the actual rewards
-        for i in range(len(trans["actions"])):
-            network_targets[i, int(trans["actions"][i])] =\
+        for i in range(len(trans.action)):
+            network_targets[i, int(trans.action[i])] =\
                 target_rewards[i]
-        history = self.policy.train_on_batch(trans["old"], network_targets)
+        history = self.policy.train_on_batch(trans.state_old, network_targets)
         metrics_dict = {"policy_loss": history}
 
         return metrics_dict
 
     def _train_fw_model(self, trans):
-        target_embedding = self.embed.predict_on_batch(trans["new"])
+        target_embedding = self.embed.predict_on_batch(trans.state_new)
         loss = self.fw_model.fit(
-            [trans["old"], np.expand_dims(trans["actions"], axis=-1)], target_embedding)
+            [trans.state_old, trans.action], target_embedding)
         metrics_dict = {"fw_model_loss": np.mean(loss)}
 
         return metrics_dict, loss
 
     def _train_iv_model(self, trans):
         loss, acc = self.iv_model.train_on_batch(
-            [trans["old"], trans["new"]], trans["actions"])
+            [trans.state_old, trans.state_new], trans.action)
         metrics_dict = {"iv_model_loss": loss, "iv_model_acc": acc}
 
         return metrics_dict
