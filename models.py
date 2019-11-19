@@ -177,7 +177,7 @@ class AuxModel:
     def __init__(self, model, trainables):
         self.trainables = trainables[0] + trainables[1]
         self.model = ForwardModel(model)
-        self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=0)
+        self.loss = lambda x, y: tf.reduce_mean(tf.square(tf.subtract(x, y)), axis=1)
         self.optimizer = tf.keras.optimizers.Adam()
         self.layers = model.layers
 

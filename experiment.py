@@ -28,7 +28,7 @@ def run_exp(cfg=None):
             print("Training agents")
             # fw model warmup phase of 2000 steps
             metrics_dict = agent.train(cfg.train_iv, cfg.train_fw,
-                                       cfg.train_policy if global_step >= 2000 else False)
+                                       cfg.train_policy if global_step >= 0 else False)
             logger.log_metrics(metrics_dict, global_step)
             logger.log_all_network_weights(agent.joint_agents[0], step)
             agent.decrease_eps(n_training_steps)

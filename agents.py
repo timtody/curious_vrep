@@ -129,7 +129,7 @@ class JointAgent:
             metrics_dict.update(m_dict)
         # train policy
         if train_policy:
-            self.buffer.adjust_rewards(100*fw_loss)
+            trans.reward = fw_loss
             metrics_dict.update(self._train_policy(trans))
 
         return metrics_dict
@@ -142,13 +142,12 @@ class JointAgent:
     def _train_policy(self, trans):
         pred_rewards_this = self.policy.predict_on_batch(trans.state_old)
         pred_rewards_next = self.policy.predict_on_batch(trans.state_new)
-        target_rewards = trans.rewards + self.alph * np.max(pred_rewards_next)
+        target_rewards = trans.reward + self.alph * np.max(pred_rewards_next)
         network_targets = pred_rewards_this.numpy()
-
+        
         # set the target rewards depending on the actual rewards
         for i in range(len(trans.action)):
-            network_targets[i, int(trans.action[i])] =\
-                target_rewards[i]
+            network_targets[i, int(trans.action[i])] = target_rewards[i]
         history = self.policy.train_on_batch(trans.state_old, network_targets)
         metrics_dict = {"policy_loss": history}
 

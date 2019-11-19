@@ -99,11 +99,11 @@ class Buffer:
         map(shuf, [self.old_state, self.new_state, self.action, self.reward])
 
     def get_random_batch(self, batch_size):
-        transition = Transition()
         if not self.filled:
             indices = np.random.randint(self.write_idx, size=batch_size)
         else:
             indices = np.random.randint(self.max_buffer_size, size=batch_size)
+        transition = Transition()
         transition.set_state_old(self.old_state[indices])
         transition.set_state_new(self.new_state[indices])
         transition.set_action(self.action[indices])
