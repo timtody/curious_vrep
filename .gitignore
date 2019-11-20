@@ -15,4 +15,6 @@ __pycache__/
 test.py
 plot.py
 .vuepress/
+docs/.vuepress/
 docs/
+node_modules/
