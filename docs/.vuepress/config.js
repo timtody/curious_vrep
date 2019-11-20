@@ -1,7 +1,7 @@
 // /.vuepress/config.js
 
 module.exports = {
-    base: "/curious_vrep/"
+    base: "/docs/"
     title: 'Hello VuePress! Yay!',
     description: 'Just playing around',
     markdown: {
