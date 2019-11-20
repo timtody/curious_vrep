@@ -1,4 +1,4 @@
-<!-- /.vuepress/components/DocIndex.vue -->
+ <!-- /.vuepress/components/DocIndex.vue -->
 
 <template>
 <div>
